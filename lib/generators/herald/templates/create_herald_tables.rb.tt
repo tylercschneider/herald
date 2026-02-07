@@ -1,0 +1,39 @@
+class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+  def change
+    create_table :herald_posts do |t|
+      t.references :user, null: false, foreign_key: true
+      t.string :title, null: false
+      t.string :slug, null: false
+      t.text :excerpt
+      t.string :meta_description
+      t.string :og_image
+      t.integer :status, default: 0, null: false
+      t.datetime :published_at
+
+      t.timestamps
+    end
+
+    add_index :herald_posts, :slug, unique: true
+    add_index :herald_posts, [:status, :published_at]
+
+    create_table :herald_categories do |t|
+      t.string :name, null: false
+      t.string :slug, null: false
+      t.text :description
+      t.integer :position, default: 0
+
+      t.timestamps
+    end
+
+    add_index :herald_categories, :slug, unique: true
+
+    create_table :herald_post_categories do |t|
+      t.references :herald_post, null: false, foreign_key: true
+      t.references :herald_category, null: false, foreign_key: true
+
+      t.timestamps
+    end
+
+    add_index :herald_post_categories, [:herald_post_id, :herald_category_id], unique: true, name: "idx_herald_post_categories_unique"
+  end
+end

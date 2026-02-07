@@ -1,0 +1,22 @@
+Herald.configure do |config|
+  # The model class that represents post authors
+  config.author_class = "User"
+
+  # Application name used in RSS feed
+  config.application_name = "My Blog"
+
+  # Method called to authenticate admin users
+  config.authentication_method = :authenticate_user!
+
+  # Method that returns the current author for new posts
+  config.current_author_method = :current_user
+
+  # Method called to authenticate API requests
+  config.api_authentication_method = :authenticate_api_user!
+
+  # Layout for admin views
+  config.admin_layout = "application"
+
+  # Layout for public blog views
+  config.blog_layout = "application"
+end
