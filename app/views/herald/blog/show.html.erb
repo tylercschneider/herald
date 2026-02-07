@@ -1,0 +1,26 @@
+<div class="py-16 max-w-3xl m-auto px-4">
+  <article>
+    <header class="mb-8">
+      <h1 class="text-4xl font-bold mb-4"><%= @post.title %></h1>
+      <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+        <span><%= @post.user.name %></span>
+        <span>&middot;</span>
+        <time datetime="<%= @post.published_at.iso8601 %>"><%= @post.published_at.strftime("%B %-d, %Y") %></time>
+        <% if @post.categories.any? %>
+          <span>&middot;</span>
+          <% @post.categories.each do |category| %>
+            <%= link_to category.name, blog_category_path(category.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+          <% end %>
+        <% end %>
+      </div>
+    </header>
+
+    <div class="prose prose-lg dark:prose-invert max-w-none">
+      <%= @post.body %>
+    </div>
+  </article>
+
+  <div class="mt-12 pt-8 border-t border-gray-200 dark:border-zinc-700">
+    <%= link_to "&larr; Back to Blog".html_safe, blog_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+  </div>
+</div>
