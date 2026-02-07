@@ -1,0 +1,19 @@
+# frozen_string_literal: true
+
+Herald::Engine.routes.draw do
+  # Public blog
+  get "blog", to: "blog#index", as: :blog
+  get "blog/feed", to: "blog#feed", as: :blog_feed, defaults: {format: :rss}
+  get "blog/category/:slug", to: "blog#category", as: :blog_category
+  get "blog/:slug", to: "blog#show", as: :blog_post
+
+  # Admin
+  resources :posts
+  resources :categories, except: [:show]
+
+  # API
+  namespace :api do
+    resources :posts
+    resources :categories
+  end
+end

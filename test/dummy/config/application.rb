@@ -5,6 +5,7 @@ require_relative "boot"
 require "rails/all"
 
 Bundler.require(*Rails.groups)
+require "keystone_components"
 require "herald"
 
 module Dummy

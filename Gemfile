@@ -4,6 +4,7 @@ source "https://rubygems.org"
 
 gemspec
 
+gem "keystone_components", path: "../keystone"
 gem "pg"
 gem "propshaft"
 

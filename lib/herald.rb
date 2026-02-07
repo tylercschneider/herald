@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "pagy"
 require "herald/version"
 require "herald/engine"
 
