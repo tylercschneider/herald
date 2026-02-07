@@ -1,0 +1,67 @@
+# frozen_string_literal: true
+
+module Herald
+  class Post < ActiveRecord::Base
+    self.table_name = "herald_posts"
+
+    belongs_to :user, class_name: -> { Herald.config.author_class }.call
+
+    has_many :post_categories, class_name: "Herald::PostCategory", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
+    has_many :categories, through: :post_categories
+
+    has_rich_text :body
+
+    enum :status, {draft: 0, published: 1}
+
+    validates :title, presence: true
+    validates :slug, presence: true, uniqueness: true
+
+    scope :recently_published, -> { published.where.not(published_at: nil).order(published_at: :desc) }
+    scope :for_category, ->(category_id) {
+      if category_id.present?
+        joins(:post_categories).where(herald_post_categories: {herald_category_id: category_id})
+      else
+        all
+      end
+    }
+    scope :search, ->(query) {
+      if query.present?
+        q = "%#{sanitize_sql_like(query)}%"
+        where("title ILIKE :q OR excerpt ILIKE :q", q: q)
+      else
+        all
+      end
+    }
+
+    before_validation :generate_slug, on: :create
+
+    def publish!
+      self.published_at ||= Time.current
+      self.status = :published
+      save!
+    end
+
+    def to_meta_tags
+      {
+        title: title,
+        description: meta_description.presence || excerpt,
+        og_type: "article"
+      }
+    end
+
+    private
+
+    def generate_slug
+      return if slug.present?
+
+      base_slug = title.to_s.parameterize
+      candidate = base_slug
+
+      if self.class.where(slug: candidate).exists?
+        candidate = "#{base_slug}-#{SecureRandom.hex(4)}"
+      end
+
+      self.slug = candidate
+    end
+  end
+end
