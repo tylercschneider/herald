@@ -94,6 +94,33 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match "Existing Post", response.body
   end
 
+  test "create with tag_list creates post with tags" do
+    assert_difference("Herald::Post.count") do
+      post herald.posts_path, params: {
+        herald_post: {title: "Tagged Post", tag_list: "Ruby, Rails"}
+      }
+    end
+    created_post = Herald::Post.last
+    assert_equal ["Ruby", "Rails"], created_post.tags.map(&:name)
+  end
+
+  test "update with tag_list updates tags" do
+    @post.tag_list = "Old Tag"
+    @post.save!
+
+    patch herald.post_path(@post), params: {
+      herald_post: {tag_list: "New Tag, Another"}
+    }
+    assert_redirected_to herald.post_path(@post)
+    assert_equal ["New Tag", "Another"], @post.reload.tags.map(&:name)
+  end
+
+  test "new form includes tag_list field" do
+    get herald.new_post_path
+    assert_response :success
+    assert_match "tag_list", response.body
+  end
+
   private
 
   def herald

@@ -31,6 +31,12 @@
     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">For search engines. 140-160 characters recommended. Falls back to excerpt if blank.</p>
   </div>
 
+  <div>
+    <%= form.label :tag_list, "Tags", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.text_field :tag_list, value: post.tag_list, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white sm:text-sm", placeholder: "Ruby, Rails, JavaScript" %>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Comma-separated list of tags.</p>
+  </div>
+
   <% if Herald::Category.any? %>
     <div>
       <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</span>
