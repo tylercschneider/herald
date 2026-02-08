@@ -30,7 +30,7 @@ jobs:
       DB_HOST: localhost
       DB_USERNAME: postgres
       DB_PASSWORD: postgres
-      BUNDLE_GITHUB__COM: x-access-token:${{ secrets.BUNDLE_GITHUB_TOKEN }}
+      BUNDLE_GITHUB__COM: x-access-token:${{ secrets.BUNDLE_GITHUB__TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
