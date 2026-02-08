@@ -115,6 +115,16 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_equal ["New Tag", "Another"], @post.reload.tags.map(&:name)
   end
 
+  test "show displays tags" do
+    @post.tag_list = "Ruby, Rails"
+    @post.save!
+
+    get herald.post_path(@post)
+    assert_response :success
+    assert_match "Ruby", response.body
+    assert_match "Rails", response.body
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success
