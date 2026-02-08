@@ -19,5 +19,6 @@ Herald::Engine.routes.draw do
       post :bulk, on: :collection
     end
     resources :categories
+    resources :tags
   end
 end
