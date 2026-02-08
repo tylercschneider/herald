@@ -14,6 +14,11 @@ module Herald
 
         posts = posts.search(params[:q])
 
+        if params[:category_slug].present?
+          category = Herald::Category.find_by(slug: params[:category_slug])
+          posts = posts.for_category(category&.id)
+        end
+
         render json: posts.map { |post| post_json(post) }
       end
 
