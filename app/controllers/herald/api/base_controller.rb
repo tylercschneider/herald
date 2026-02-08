@@ -5,6 +5,8 @@ module Herald
     class BaseController < ::ApplicationController
       include Pagy::Method
 
+      rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+
       before_action :herald_api_authenticate!
 
       private
@@ -15,6 +17,10 @@ module Herald
 
       def herald_author
         send(Herald.config.current_author_method)
+      end
+
+      def render_not_found
+        render json: {error: "Not found"}, status: :not_found
       end
 
       def paginate(collection)
