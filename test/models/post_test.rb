@@ -157,4 +157,24 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_includes Herald::Post.for_category(nil), post
     assert_includes Herald::Post.for_category(""), post
   end
+
+  test "for_tag returns posts with the given tag" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    other_tag = Herald::Tag.create!(name: "Python")
+    ruby_post = Herald::Post.create!(title: "Ruby Post", user: @user)
+    ruby_post.tags << tag
+    python_post = Herald::Post.create!(title: "Python Post", user: @user)
+    python_post.tags << other_tag
+
+    results = Herald::Post.for_tag(tag.id)
+    assert_includes results, ruby_post
+    assert_not_includes results, python_post
+  end
+
+  test "for_tag returns all posts when tag_id is blank" do
+    post = Herald::Post.create!(title: "Any Post", user: @user)
+
+    assert_includes Herald::Post.for_tag(nil), post
+    assert_includes Herald::Post.for_tag(""), post
+  end
 end

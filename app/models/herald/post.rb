@@ -37,6 +37,13 @@ module Herald
         all
       end
     }
+    scope :for_tag, ->(tag_id) {
+      if tag_id.present?
+        joins(:post_tags).where(herald_post_tags: {herald_tag_id: tag_id})
+      else
+        all
+      end
+    }
     scope :search, ->(query) {
       if query.present?
         q = "%#{sanitize_sql_like(query)}%"
