@@ -89,6 +89,32 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "#{Herald.config.application_name} Blog", response.body
   end
 
+  test "tag filters posts by tag" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @published_post.tags << tag
+
+    get herald.blog_tag_path(tag.slug)
+    assert_response :success
+    assert_match "Published Post", response.body
+    assert_match "Ruby", response.body
+  end
+
+  test "tag returns 404 for nonexistent tag" do
+    get herald.blog_tag_path("nonexistent")
+    assert_response :not_found
+  end
+
+  test "tag only shows published posts" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @published_post.tags << tag
+    @draft_post.tags << tag
+
+    get herald.blog_tag_path(tag.slug)
+    assert_response :success
+    assert_match "Published Post", response.body
+    assert_no_match "Draft Post", response.body
+  end
+
   private
 
   def herald

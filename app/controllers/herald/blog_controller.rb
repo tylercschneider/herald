@@ -25,6 +25,13 @@ module Herald
       render plain: "Not Found", status: :not_found
     end
 
+    def tag
+      @tag = Herald::Tag.find_by!(slug: params[:slug])
+      @pagy, @posts = pagy(@tag.posts.recently_published, limit: 20)
+    rescue ActiveRecord::RecordNotFound
+      render plain: "Not Found", status: :not_found
+    end
+
     def feed
       @posts = Herald::Post.recently_published.limit(20)
       respond_to do |format|
