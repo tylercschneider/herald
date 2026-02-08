@@ -13,13 +13,13 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     @post.publish!
     get herald.api_posts_path, as: :json
     assert_response :success
-    assert_includes response.parsed_body.pluck("title"), "API Post"
+    assert_includes response.parsed_body["data"].pluck("title"), "API Post"
   end
 
   test "index returns all posts when include_drafts param" do
     get herald.api_posts_path(include_drafts: true), as: :json
     assert_response :success
-    assert_includes response.parsed_body.pluck("title"), "API Post"
+    assert_includes response.parsed_body["data"].pluck("title"), "API Post"
   end
 
   test "show returns post" do
@@ -75,11 +75,11 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     @post.publish!
     category = Herald::Category.create!(name: "Ruby")
     @post.categories << category
-    other = Herald::Post.create!(title: "Other Post", user: @user, status: :published, published_at: 1.day.ago)
+    Herald::Post.create!(title: "Other Post", user: @user, status: :published, published_at: 1.day.ago)
 
     get herald.api_posts_path(category_slug: "ruby"), as: :json
     assert_response :success
-    titles = response.parsed_body.pluck("title")
+    titles = response.parsed_body["data"].pluck("title")
     assert_includes titles, "API Post"
     assert_not_includes titles, "Other Post"
   end
@@ -92,7 +92,7 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
 
     get herald.api_posts_path(tag_slug: "ruby"), as: :json
     assert_response :success
-    titles = response.parsed_body.pluck("title")
+    titles = response.parsed_body["data"].pluck("title")
     assert_includes titles, "API Post"
     assert_not_includes titles, "Other Post"
   end
@@ -103,9 +103,29 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
 
     get herald.api_posts_path(q: "Rails"), as: :json
     assert_response :success
-    titles = response.parsed_body.pluck("title")
+    titles = response.parsed_body["data"].pluck("title")
     assert_includes titles, "Rails Guide"
     assert_not_includes titles, "API Post"
+  end
+
+  test "index returns pagination metadata" do
+    @post.publish!
+    get herald.api_posts_path, as: :json
+    assert_response :success
+    meta = response.parsed_body["meta"]
+    assert_equal 1, meta["page"]
+    assert_equal 1, meta["total_pages"]
+    assert_equal 1, meta["total_count"]
+  end
+
+  test "index paginates with page and per_page params" do
+    3.times { |i| Herald::Post.create!(title: "Post #{i}", user: @user, status: :published, published_at: i.days.ago) }
+    get herald.api_posts_path(page: 2, per_page: 2), as: :json
+    assert_response :success
+    assert_equal 2, response.parsed_body["meta"]["page"]
+    assert_equal 2, response.parsed_body["meta"]["total_pages"]
+    assert_equal 3, response.parsed_body["meta"]["total_count"]
+    assert_equal 1, response.parsed_body["data"].length
   end
 
   test "unauthorized without authentication" do

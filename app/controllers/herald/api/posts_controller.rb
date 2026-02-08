@@ -24,7 +24,8 @@ module Herald
           posts = posts.for_tag(tag&.id)
         end
 
-        render json: posts.map { |post| post_json(post) }
+        pagy, records = paginate(posts)
+        render json: paginated_json(pagy, records.map { |post| post_json(post) })
       end
 
       def show
