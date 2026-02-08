@@ -13,13 +13,13 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     @post.publish!
     get herald.api_posts_path, as: :json
     assert_response :success
-    assert_includes response.parsed_body.pluck("title"), "API Post"
+    assert_includes response.parsed_body["data"].pluck("title"), "API Post"
   end
 
   test "index returns all posts when include_drafts param" do
     get herald.api_posts_path(include_drafts: true), as: :json
     assert_response :success
-    assert_includes response.parsed_body.pluck("title"), "API Post"
+    assert_includes response.parsed_body["data"].pluck("title"), "API Post"
   end
 
   test "show returns post" do
@@ -69,6 +69,127 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
       delete herald.api_post_path(@post), as: :json
     end
     assert_response :no_content
+  end
+
+  test "index filters by category_slug" do
+    @post.publish!
+    category = Herald::Category.create!(name: "Ruby")
+    @post.categories << category
+    Herald::Post.create!(title: "Other Post", user: @user, status: :published, published_at: 1.day.ago)
+
+    get herald.api_posts_path(category_slug: "ruby"), as: :json
+    assert_response :success
+    titles = response.parsed_body["data"].pluck("title")
+    assert_includes titles, "API Post"
+    assert_not_includes titles, "Other Post"
+  end
+
+  test "index filters by tag_slug" do
+    @post.publish!
+    tag = Herald::Tag.create!(name: "Ruby")
+    @post.tags << tag
+    Herald::Post.create!(title: "Other Post", user: @user, status: :published, published_at: 1.day.ago)
+
+    get herald.api_posts_path(tag_slug: "ruby"), as: :json
+    assert_response :success
+    titles = response.parsed_body["data"].pluck("title")
+    assert_includes titles, "API Post"
+    assert_not_includes titles, "Other Post"
+  end
+
+  test "index filters by search query" do
+    @post.publish!
+    Herald::Post.create!(title: "Rails Guide", user: @user, status: :published, published_at: 1.day.ago)
+
+    get herald.api_posts_path(q: "Rails"), as: :json
+    assert_response :success
+    titles = response.parsed_body["data"].pluck("title")
+    assert_includes titles, "Rails Guide"
+    assert_not_includes titles, "API Post"
+  end
+
+  test "index returns pagination metadata" do
+    @post.publish!
+    get herald.api_posts_path, as: :json
+    assert_response :success
+    meta = response.parsed_body["meta"]
+    assert_equal 1, meta["page"]
+    assert_equal 1, meta["total_pages"]
+    assert_equal 1, meta["total_count"]
+  end
+
+  test "index paginates with page and per_page params" do
+    3.times { |i| Herald::Post.create!(title: "Post #{i}", user: @user, status: :published, published_at: i.days.ago) }
+    get herald.api_posts_path(page: 2, per_page: 2), as: :json
+    assert_response :success
+    assert_equal 2, response.parsed_body["meta"]["page"]
+    assert_equal 2, response.parsed_body["meta"]["total_pages"]
+    assert_equal 3, response.parsed_body["meta"]["total_count"]
+    assert_equal 1, response.parsed_body["data"].length
+  end
+
+  test "by_slug returns post by slug" do
+    get herald.by_slug_api_posts_path(slug: "api-post"), as: :json
+    assert_response :success
+    assert_equal "API Post", response.parsed_body["title"]
+    assert_equal "api-post", response.parsed_body["slug"]
+  end
+
+  test "by_slug returns 404 for unknown slug" do
+    get herald.by_slug_api_posts_path(slug: "nonexistent"), as: :json
+    assert_response :not_found
+  end
+
+  test "bulk publish posts" do
+    post2 = Herald::Post.create!(title: "Post 2", user: @user)
+    post herald.bulk_api_posts_path, params: {action_name: "publish", ids: [@post.id, post2.id]}, as: :json
+    assert_response :success
+    assert_equal 2, response.parsed_body["count"]
+    assert @post.reload.published?
+    assert post2.reload.published?
+  end
+
+  test "bulk unpublish posts" do
+    @post.publish!
+    post herald.bulk_api_posts_path, params: {action_name: "unpublish", ids: [@post.id]}, as: :json
+    assert_response :success
+    assert @post.reload.draft?
+  end
+
+  test "bulk delete posts" do
+    post2 = Herald::Post.create!(title: "Post 2", user: @user)
+    assert_difference("Herald::Post.count", -2) do
+      post herald.bulk_api_posts_path, params: {action_name: "delete", ids: [@post.id, post2.id]}, as: :json
+    end
+    assert_response :success
+    assert_equal 2, response.parsed_body["count"]
+  end
+
+  test "bulk with invalid action returns error" do
+    post herald.bulk_api_posts_path, params: {action_name: "invalid", ids: [@post.id]}, as: :json
+    assert_response :unprocessable_entity
+  end
+
+  test "show includes tags in response" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @post.tags << tag
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    tags = response.parsed_body["tags"]
+    assert_equal [{"id" => tag.id, "name" => "Ruby", "slug" => "ruby"}], tags
+  end
+
+  test "show includes pinned in response" do
+    @post.update!(pinned: true)
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert_equal true, response.parsed_body["pinned"]
+  end
+
+  test "show includes featured_image_url as null when no image" do
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert_nil response.parsed_body["featured_image_url"]
   end
 
   test "unauthorized without authentication" do

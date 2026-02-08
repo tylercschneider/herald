@@ -9,7 +9,8 @@ module Herald
     attr_accessor :author_class, :application_name,
       :authentication_method, :current_author_method,
       :api_authentication_method,
-      :admin_layout, :blog_layout
+      :admin_layout, :blog_layout,
+      :webhook_url, :webhook_secret
 
     def initialize
       @author_class = "User"

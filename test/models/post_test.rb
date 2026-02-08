@@ -3,6 +3,8 @@
 require "test_helper"
 
 class Herald::PostTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
   setup do
     @user = User.create!(name: "Test User", email: "test@example.com")
   end
@@ -225,6 +227,26 @@ class Herald::PostTest < ActiveSupport::TestCase
     post.publish_if_due!
 
     assert post.draft?
+  end
+
+  test "publish! enqueues webhook delivery job when webhook configured" do
+    Herald.config.webhook_url = "https://example.com/webhook"
+    Herald.config.webhook_secret = "secret"
+    post = Herald::Post.create!(title: "Webhook Post", user: @user)
+
+    assert_enqueued_with(job: Herald::WebhookDeliveryJob) do
+      post.publish!
+    end
+  ensure
+    Herald.reset_config!
+  end
+
+  test "publish! does not enqueue webhook when not configured" do
+    post = Herald::Post.create!(title: "No Webhook Post", user: @user)
+
+    assert_no_enqueued_jobs(only: Herald::WebhookDeliveryJob) do
+      post.publish!
+    end
   end
 
   test "recently_published orders pinned posts first" do

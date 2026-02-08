@@ -12,11 +12,47 @@ module Herald
           Herald::Post.recently_published
         end
 
-        render json: posts.map { |post| post_json(post) }
+        posts = posts.search(params[:q])
+
+        if params[:category_slug].present?
+          category = Herald::Category.find_by(slug: params[:category_slug])
+          posts = posts.for_category(category&.id)
+        end
+
+        if params[:tag_slug].present?
+          tag = Herald::Tag.find_by(slug: params[:tag_slug])
+          posts = posts.for_tag(tag&.id)
+        end
+
+        pagy, records = paginate(posts)
+        render json: paginated_json(pagy, records.map { |post| post_json(post) })
       end
 
       def show
         render json: post_json(@post)
+      end
+
+      def by_slug
+        post = Herald::Post.find_by!(slug: params[:slug])
+        render json: post_json(post)
+      end
+
+      def bulk
+        posts = Herald::Post.where(id: params[:ids])
+        count = posts.count
+
+        case params[:action_name]
+        when "publish"
+          posts.each { |p| p.publish! }
+        when "unpublish"
+          posts.update_all(status: :draft)
+        when "delete"
+          posts.destroy_all
+        else
+          return render json: {error: "Invalid action"}, status: :unprocessable_entity
+        end
+
+        render json: {count: count}
       end
 
       def create
@@ -67,7 +103,10 @@ module Herald
           status: post.status,
           published_at: post.published_at,
           author: post.user.name,
+          pinned: post.pinned,
+          featured_image_url: post.featured_image.attached? ? Rails.application.routes.url_helpers.rails_blob_url(post.featured_image, only_path: true) : nil,
           categories: post.categories.map { |c| {id: c.id, name: c.name, slug: c.slug} },
+          tags: post.tags.map { |t| {id: t.id, name: t.name, slug: t.slug} },
           created_at: post.created_at,
           updated_at: post.updated_at
         }

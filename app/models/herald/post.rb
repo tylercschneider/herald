@@ -56,6 +56,8 @@ module Herald
 
     before_validation :generate_slug, on: :create
 
+    after_commit :deliver_publish_webhook, if: -> { saved_change_to_status? && published? }
+
     def publish!
       self.published_at ||= Time.current
       self.status = :published
@@ -78,6 +80,12 @@ module Herald
     end
 
     private
+
+    def deliver_publish_webhook
+      return unless Herald.config.webhook_url.present?
+
+      Herald::WebhookDeliveryJob.perform_later("post.published", id)
+    end
 
     def generate_slug
       return if slug.present?

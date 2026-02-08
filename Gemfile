@@ -4,7 +4,11 @@ source "https://rubygems.org"
 
 gemspec
 
-gem "keystone_components", path: "../keystone"
+if ENV["CI"]
+  gem "keystone_components", github: "tylercschneider/keystone"
+else
+  gem "keystone_components", path: "../keystone"
+end
 gem "pg"
 gem "propshaft"
 

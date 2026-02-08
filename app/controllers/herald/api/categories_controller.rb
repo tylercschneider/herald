@@ -6,8 +6,8 @@ module Herald
       before_action :set_category, only: [:show, :update, :destroy]
 
       def index
-        categories = Herald::Category.ordered
-        render json: categories.map { |c| category_json(c) }
+        pagy, records = paginate(Herald::Category.ordered)
+        render json: paginated_json(pagy, records.map { |c| category_json(c) })
       end
 
       def show
