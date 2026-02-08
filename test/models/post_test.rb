@@ -189,6 +189,44 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_not post.featured_image.attached?
   end
 
+  test "can be set to scheduled status" do
+    post = Herald::Post.create!(title: "Future Post", user: @user, status: :scheduled, published_at: 1.day.from_now)
+    assert post.scheduled?
+    assert_not post.published?
+    assert_not post.draft?
+  end
+
+  test "recently_published excludes scheduled posts" do
+    Herald::Post.create!(title: "Published", user: @user, status: :published, published_at: 1.day.ago)
+    Herald::Post.create!(title: "Scheduled", user: @user, status: :scheduled, published_at: 1.day.from_now)
+
+    results = Herald::Post.recently_published
+    assert_equal 1, results.count
+    assert_equal "Published", results.first.title
+  end
+
+  test "publish_if_due! publishes scheduled post with past published_at" do
+    post = Herald::Post.create!(title: "Due Post", user: @user, status: :scheduled, published_at: 1.hour.ago)
+    post.publish_if_due!
+
+    assert post.published?
+  end
+
+  test "publish_if_due! does not publish scheduled post with future published_at" do
+    post = Herald::Post.create!(title: "Future Post", user: @user, status: :scheduled, published_at: 1.day.from_now)
+    post.publish_if_due!
+
+    assert post.scheduled?
+    assert_not post.published?
+  end
+
+  test "publish_if_due! does nothing for draft posts" do
+    post = Herald::Post.create!(title: "Draft Post", user: @user)
+    post.publish_if_due!
+
+    assert post.draft?
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)

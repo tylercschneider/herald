@@ -15,7 +15,7 @@ module Herald
     has_rich_text :body
     has_one_attached :featured_image
 
-    enum :status, {draft: 0, published: 1}
+    enum :status, {draft: 0, published: 1, scheduled: 2}
 
     def tag_list
       tags.map(&:name).join(", ")
@@ -60,6 +60,13 @@ module Herald
       self.published_at ||= Time.current
       self.status = :published
       save!
+    end
+
+    def publish_if_due!
+      return unless scheduled?
+      return if published_at.nil? || published_at > Time.current
+
+      publish!
     end
 
     def to_meta_tags

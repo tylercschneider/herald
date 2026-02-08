@@ -132,6 +132,23 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert Herald::Post.last.pinned
   end
 
+  test "create scheduled post with published_at" do
+    future_time = 1.day.from_now.beginning_of_hour
+    post herald.posts_path, params: {
+      herald_post: {title: "Scheduled Post", status: "scheduled", published_at: future_time.iso8601}
+    }
+    created = Herald::Post.last
+    assert created.scheduled?
+    assert_in_delta future_time, created.published_at, 1.second
+  end
+
+  test "index shows scheduled badge" do
+    Herald::Post.create!(title: "Scheduled Post", user: @user, status: :scheduled, published_at: 1.day.from_now)
+    get herald.posts_path
+    assert_response :success
+    assert_match "Scheduled", response.body
+  end
+
   test "new form includes featured_image upload" do
     get herald.new_post_path
     assert_response :success
