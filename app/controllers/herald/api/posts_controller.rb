@@ -37,6 +37,24 @@ module Herald
         render json: post_json(post)
       end
 
+      def bulk
+        posts = Herald::Post.where(id: params[:ids])
+        count = posts.count
+
+        case params[:action_name]
+        when "publish"
+          posts.each { |p| p.publish! }
+        when "unpublish"
+          posts.update_all(status: :draft)
+        when "delete"
+          posts.destroy_all
+        else
+          return render json: {error: "Invalid action"}, status: :unprocessable_entity
+        end
+
+        render json: {count: count}
+      end
+
       def create
         post = Herald::Post.new(post_params)
         post.user = herald_author

@@ -140,6 +140,36 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "bulk publish posts" do
+    post2 = Herald::Post.create!(title: "Post 2", user: @user)
+    post herald.bulk_api_posts_path, params: {action_name: "publish", ids: [@post.id, post2.id]}, as: :json
+    assert_response :success
+    assert_equal 2, response.parsed_body["count"]
+    assert @post.reload.published?
+    assert post2.reload.published?
+  end
+
+  test "bulk unpublish posts" do
+    @post.publish!
+    post herald.bulk_api_posts_path, params: {action_name: "unpublish", ids: [@post.id]}, as: :json
+    assert_response :success
+    assert @post.reload.draft?
+  end
+
+  test "bulk delete posts" do
+    post2 = Herald::Post.create!(title: "Post 2", user: @user)
+    assert_difference("Herald::Post.count", -2) do
+      post herald.bulk_api_posts_path, params: {action_name: "delete", ids: [@post.id, post2.id]}, as: :json
+    end
+    assert_response :success
+    assert_equal 2, response.parsed_body["count"]
+  end
+
+  test "bulk with invalid action returns error" do
+    post herald.bulk_api_posts_path, params: {action_name: "invalid", ids: [@post.id]}, as: :json
+    assert_response :unprocessable_entity
+  end
+
   test "unauthorized without authentication" do
     sign_out
     get herald.api_posts_path, as: :json

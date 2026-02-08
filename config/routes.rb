@@ -16,6 +16,7 @@ Herald::Engine.routes.draw do
   namespace :api do
     resources :posts do
       get "by_slug/:slug", action: :by_slug, on: :collection, as: :by_slug
+      post :bulk, on: :collection
     end
     resources :categories
   end
