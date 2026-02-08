@@ -12,8 +12,20 @@
             <%= link_to category.name, blog_category_path(category.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
           <% end %>
         <% end %>
+        <% if @post.tags.any? %>
+          <span>&middot;</span>
+          <% @post.tags.each do |tag| %>
+            <%= link_to tag.name, blog_tag_path(tag.slug), class: "text-blue-600 hover:underline dark:text-blue-400" %>
+          <% end %>
+        <% end %>
       </div>
     </header>
+
+    <% if @post.featured_image.attached? %>
+      <div class="mb-8">
+        <%= image_tag @post.featured_image, class: "w-full rounded-lg" %>
+      </div>
+    <% end %>
 
     <div class="prose prose-lg dark:prose-invert max-w-none">
       <%= @post.body %>

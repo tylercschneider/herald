@@ -9,17 +9,38 @@ module Herald
     has_many :post_categories, class_name: "Herald::PostCategory", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
     has_many :categories, through: :post_categories
 
-    has_rich_text :body
+    has_many :post_tags, class_name: "Herald::PostTag", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
+    has_many :tags, through: :post_tags
 
-    enum :status, {draft: 0, published: 1}
+    has_rich_text :body
+    has_one_attached :featured_image
+
+    enum :status, {draft: 0, published: 1, scheduled: 2}
+
+    def tag_list
+      tags.map(&:name).join(", ")
+    end
+
+    def tag_list=(names)
+      self.tags = names.split(",").map(&:strip).reject(&:blank?).map do |name|
+        Herald::Tag.find_or_create_by!(name: name)
+      end
+    end
 
     validates :title, presence: true
     validates :slug, presence: true, uniqueness: true
 
-    scope :recently_published, -> { published.where.not(published_at: nil).order(published_at: :desc) }
+    scope :recently_published, -> { published.where.not(published_at: nil).order(pinned: :desc, published_at: :desc) }
     scope :for_category, ->(category_id) {
       if category_id.present?
         joins(:post_categories).where(herald_post_categories: {herald_category_id: category_id})
+      else
+        all
+      end
+    }
+    scope :for_tag, ->(tag_id) {
+      if tag_id.present?
+        joins(:post_tags).where(herald_post_tags: {herald_tag_id: tag_id})
       else
         all
       end
@@ -39,6 +60,13 @@ module Herald
       self.published_at ||= Time.current
       self.status = :published
       save!
+    end
+
+    def publish_if_due!
+      return unless scheduled?
+      return if published_at.nil? || published_at > Time.current
+
+      publish!
     end
 
     def to_meta_tags

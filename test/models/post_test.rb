@@ -157,4 +157,83 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_includes Herald::Post.for_category(nil), post
     assert_includes Herald::Post.for_category(""), post
   end
+
+  test "for_tag returns posts with the given tag" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    other_tag = Herald::Tag.create!(name: "Python")
+    ruby_post = Herald::Post.create!(title: "Ruby Post", user: @user)
+    ruby_post.tags << tag
+    python_post = Herald::Post.create!(title: "Python Post", user: @user)
+    python_post.tags << other_tag
+
+    results = Herald::Post.for_tag(tag.id)
+    assert_includes results, ruby_post
+    assert_not_includes results, python_post
+  end
+
+  test "for_tag returns all posts when tag_id is blank" do
+    post = Herald::Post.create!(title: "Any Post", user: @user)
+
+    assert_includes Herald::Post.for_tag(nil), post
+    assert_includes Herald::Post.for_tag(""), post
+  end
+
+  test "pinned defaults to false" do
+    post = Herald::Post.create!(title: "Regular Post", user: @user)
+    assert_equal false, post.pinned
+  end
+
+  test "has_one_attached featured_image" do
+    post = Herald::Post.create!(title: "Image Post", user: @user)
+    assert post.respond_to?(:featured_image)
+    assert_not post.featured_image.attached?
+  end
+
+  test "can be set to scheduled status" do
+    post = Herald::Post.create!(title: "Future Post", user: @user, status: :scheduled, published_at: 1.day.from_now)
+    assert post.scheduled?
+    assert_not post.published?
+    assert_not post.draft?
+  end
+
+  test "recently_published excludes scheduled posts" do
+    Herald::Post.create!(title: "Published", user: @user, status: :published, published_at: 1.day.ago)
+    Herald::Post.create!(title: "Scheduled", user: @user, status: :scheduled, published_at: 1.day.from_now)
+
+    results = Herald::Post.recently_published
+    assert_equal 1, results.count
+    assert_equal "Published", results.first.title
+  end
+
+  test "publish_if_due! publishes scheduled post with past published_at" do
+    post = Herald::Post.create!(title: "Due Post", user: @user, status: :scheduled, published_at: 1.hour.ago)
+    post.publish_if_due!
+
+    assert post.published?
+  end
+
+  test "publish_if_due! does not publish scheduled post with future published_at" do
+    post = Herald::Post.create!(title: "Future Post", user: @user, status: :scheduled, published_at: 1.day.from_now)
+    post.publish_if_due!
+
+    assert post.scheduled?
+    assert_not post.published?
+  end
+
+  test "publish_if_due! does nothing for draft posts" do
+    post = Herald::Post.create!(title: "Draft Post", user: @user)
+    post.publish_if_due!
+
+    assert post.draft?
+  end
+
+  test "recently_published orders pinned posts first" do
+    old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
+    new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
+    pinned_post = Herald::Post.create!(title: "Pinned", user: @user, status: :published, published_at: 2.weeks.ago, pinned: true)
+
+    results = Herald::Post.recently_published
+    assert_equal pinned_post, results.first
+    assert_equal [pinned_post, new_post, old_post], results.to_a
+  end
 end

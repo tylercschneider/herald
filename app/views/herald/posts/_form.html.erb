@@ -31,6 +31,22 @@
     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">For search engines. 140-160 characters recommended. Falls back to excerpt if blank.</p>
   </div>
 
+  <div>
+    <%= form.label :featured_image, "Featured Image", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <% if post.featured_image.attached? %>
+      <div class="mt-2 mb-2">
+        <%= image_tag post.featured_image, class: "max-h-48 rounded-lg" %>
+      </div>
+    <% end %>
+    <%= form.file_field :featured_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:text-gray-400 dark:file:bg-indigo-900/50 dark:file:text-indigo-400" %>
+  </div>
+
+  <div>
+    <%= form.label :tag_list, "Tags", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.text_field :tag_list, value: post.tag_list, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white sm:text-sm", placeholder: "Ruby, Rails, JavaScript" %>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Comma-separated list of tags.</p>
+  </div>
+
   <% if Herald::Category.any? %>
     <div>
       <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</span>
@@ -46,8 +62,21 @@
   <% end %>
 
   <div>
+    <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
+      <%= form.check_box :pinned, class: "rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600" %>
+      Pin this post (appears first in blog listing)
+    </label>
+  </div>
+
+  <div>
     <%= form.label :status, class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
     <%= form.select :status, Herald::Post.statuses.keys.map { |s| [s.titleize, s] }, {}, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white sm:text-sm" %>
+  </div>
+
+  <div>
+    <%= form.label :published_at, "Publish Date", class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+    <%= form.datetime_local_field :published_at, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white sm:text-sm" %>
+    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Set a future date with "Scheduled" status to auto-publish.</p>
   </div>
 
   <div class="flex items-center justify-end gap-3">
