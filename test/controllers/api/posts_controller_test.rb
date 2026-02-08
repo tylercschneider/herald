@@ -71,6 +71,17 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :no_content
   end
 
+  test "index filters by search query" do
+    @post.publish!
+    Herald::Post.create!(title: "Rails Guide", user: @user, status: :published, published_at: 1.day.ago)
+
+    get herald.api_posts_path(q: "Rails"), as: :json
+    assert_response :success
+    titles = response.parsed_body.pluck("title")
+    assert_includes titles, "Rails Guide"
+    assert_not_includes titles, "API Post"
+  end
+
   test "unauthorized without authentication" do
     sign_out
     get herald.api_posts_path, as: :json

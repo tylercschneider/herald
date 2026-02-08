@@ -12,6 +12,8 @@ module Herald
           Herald::Post.recently_published
         end
 
+        posts = posts.search(params[:q])
+
         render json: posts.map { |post| post_json(post) }
       end
 
