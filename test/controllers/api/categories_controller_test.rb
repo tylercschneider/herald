@@ -9,10 +9,14 @@ class Herald::Api::CategoriesControllerTest < ActionDispatch::IntegrationTest
     @category = Herald::Category.create!(name: "Tech")
   end
 
-  test "index returns categories" do
+  test "index returns categories with pagination" do
     get herald.api_categories_path, as: :json
     assert_response :success
-    assert_includes response.parsed_body.pluck("name"), "Tech"
+    assert_includes response.parsed_body["data"].pluck("name"), "Tech"
+    meta = response.parsed_body["meta"]
+    assert_equal 1, meta["page"]
+    assert_equal 1, meta["total_pages"]
+    assert_equal 1, meta["total_count"]
   end
 
   test "show returns category" do
