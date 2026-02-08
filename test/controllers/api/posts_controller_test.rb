@@ -170,6 +170,28 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "show includes tags in response" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @post.tags << tag
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    tags = response.parsed_body["tags"]
+    assert_equal [{"id" => tag.id, "name" => "Ruby", "slug" => "ruby"}], tags
+  end
+
+  test "show includes pinned in response" do
+    @post.update!(pinned: true)
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert_equal true, response.parsed_body["pinned"]
+  end
+
+  test "show includes featured_image_url as null when no image" do
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert_nil response.parsed_body["featured_image_url"]
+  end
+
   test "unauthorized without authentication" do
     sign_out
     get herald.api_posts_path, as: :json
