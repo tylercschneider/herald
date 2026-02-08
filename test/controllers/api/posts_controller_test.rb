@@ -128,6 +128,18 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 1, response.parsed_body["data"].length
   end
 
+  test "by_slug returns post by slug" do
+    get herald.by_slug_api_posts_path(slug: "api-post"), as: :json
+    assert_response :success
+    assert_equal "API Post", response.parsed_body["title"]
+    assert_equal "api-post", response.parsed_body["slug"]
+  end
+
+  test "by_slug returns 404 for unknown slug" do
+    get herald.by_slug_api_posts_path(slug: "nonexistent"), as: :json
+    assert_response :not_found
+  end
+
   test "unauthorized without authentication" do
     sign_out
     get herald.api_posts_path, as: :json

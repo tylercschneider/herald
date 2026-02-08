@@ -32,6 +32,11 @@ module Herald
         render json: post_json(@post)
       end
 
+      def by_slug
+        post = Herald::Post.find_by!(slug: params[:slug])
+        render json: post_json(post)
+      end
+
       def create
         post = Herald::Post.new(post_params)
         post.user = herald_author
