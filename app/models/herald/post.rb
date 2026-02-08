@@ -9,6 +9,9 @@ module Herald
     has_many :post_categories, class_name: "Herald::PostCategory", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
     has_many :categories, through: :post_categories
 
+    has_many :post_tags, class_name: "Herald::PostTag", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
+    has_many :tags, through: :post_tags
+
     has_rich_text :body
 
     enum :status, {draft: 0, published: 1}

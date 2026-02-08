@@ -49,6 +49,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000001) do
   add_index :herald_tags, :name, unique: true
   add_index :herald_tags, :slug, unique: true
 
+  create_table :herald_post_tags, force: :cascade do |t|
+    t.references :herald_post, null: false, foreign_key: true
+    t.references :herald_tag, null: false, foreign_key: true
+    t.timestamps
+  end
+
+  add_index :herald_post_tags, [:herald_post_id, :herald_tag_id], unique: true, name: "idx_herald_post_tags_unique"
+
   # ActionText tables
   create_table :action_text_rich_texts, force: :cascade do |t|
     t.string :name, null: false
