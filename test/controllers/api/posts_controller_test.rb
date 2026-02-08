@@ -84,6 +84,19 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes titles, "Other Post"
   end
 
+  test "index filters by tag_slug" do
+    @post.publish!
+    tag = Herald::Tag.create!(name: "Ruby")
+    @post.tags << tag
+    Herald::Post.create!(title: "Other Post", user: @user, status: :published, published_at: 1.day.ago)
+
+    get herald.api_posts_path(tag_slug: "ruby"), as: :json
+    assert_response :success
+    titles = response.parsed_body.pluck("title")
+    assert_includes titles, "API Post"
+    assert_not_includes titles, "Other Post"
+  end
+
   test "index filters by search query" do
     @post.publish!
     Herald::Post.create!(title: "Rails Guide", user: @user, status: :published, published_at: 1.day.ago)
