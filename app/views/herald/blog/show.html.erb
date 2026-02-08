@@ -21,6 +21,12 @@
       </div>
     </header>
 
+    <% if @post.featured_image.attached? %>
+      <div class="mb-8">
+        <%= image_tag @post.featured_image, class: "w-full rounded-lg" %>
+      </div>
+    <% end %>
+
     <div class="prose prose-lg dark:prose-invert max-w-none">
       <%= @post.body %>
     </div>

@@ -13,6 +13,7 @@ module Herald
     has_many :tags, through: :post_tags
 
     has_rich_text :body
+    has_one_attached :featured_image
 
     enum :status, {draft: 0, published: 1}
 

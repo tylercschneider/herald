@@ -132,6 +132,12 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert Herald::Post.last.pinned
   end
 
+  test "new form includes featured_image upload" do
+    get herald.new_post_path
+    assert_response :success
+    assert_match "featured_image", response.body
+  end
+
   test "new form includes pinned checkbox" do
     get herald.new_post_path
     assert_response :success

@@ -24,6 +24,12 @@
       <% end %>
     </div>
 
+    <% if @post.featured_image.attached? %>
+      <div class="mb-4">
+        <%= image_tag @post.featured_image, class: "w-full rounded-lg" %>
+      </div>
+    <% end %>
+
     <% if @post.excerpt.present? %>
       <p class="text-gray-600 dark:text-gray-400 italic mb-4"><%= @post.excerpt %></p>
     <% end %>

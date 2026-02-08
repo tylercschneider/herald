@@ -183,6 +183,12 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal false, post.pinned
   end
 
+  test "has_one_attached featured_image" do
+    post = Herald::Post.create!(title: "Image Post", user: @user)
+    assert post.respond_to?(:featured_image)
+    assert_not post.featured_image.attached?
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
