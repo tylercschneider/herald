@@ -89,6 +89,24 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "#{Herald.config.application_name} Blog", response.body
   end
 
+  test "index shows tag links on posts" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @published_post.tags << tag
+
+    get herald.blog_path
+    assert_response :success
+    assert_select "a[href='#{herald.blog_tag_path(tag.slug)}']", text: "Ruby"
+  end
+
+  test "show displays tag links" do
+    tag = Herald::Tag.create!(name: "Ruby")
+    @published_post.tags << tag
+
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_select "a[href='#{herald.blog_tag_path(tag.slug)}']", text: "Ruby"
+  end
+
   test "tag filters posts by tag" do
     tag = Herald::Tag.create!(name: "Ruby")
     @published_post.tags << tag

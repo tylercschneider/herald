@@ -26,6 +26,12 @@
                 <%= link_to category.name, blog_category_path(category.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
               <% end %>
             <% end %>
+            <% if post.tags.any? %>
+              <span>&middot;</span>
+              <% post.tags.each do |tag| %>
+                <%= link_to tag.name, blog_tag_path(tag.slug), class: "text-blue-600 hover:underline dark:text-blue-400" %>
+              <% end %>
+            <% end %>
           </div>
           <% if post.excerpt.present? %>
             <p class="text-gray-600 dark:text-gray-400"><%= post.excerpt %></p>
