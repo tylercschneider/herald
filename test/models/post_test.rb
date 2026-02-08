@@ -177,4 +177,19 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_includes Herald::Post.for_tag(nil), post
     assert_includes Herald::Post.for_tag(""), post
   end
+
+  test "pinned defaults to false" do
+    post = Herald::Post.create!(title: "Regular Post", user: @user)
+    assert_equal false, post.pinned
+  end
+
+  test "recently_published orders pinned posts first" do
+    old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
+    new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
+    pinned_post = Herald::Post.create!(title: "Pinned", user: @user, status: :published, published_at: 2.weeks.ago, pinned: true)
+
+    results = Herald::Post.recently_published
+    assert_equal pinned_post, results.first
+    assert_equal [pinned_post, new_post, old_post], results.to_a
+  end
 end

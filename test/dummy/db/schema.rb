@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_07_000001) do
     t.string :meta_description
     t.string :og_image
     t.integer :status, default: 0, null: false
+    t.boolean :pinned, default: false, null: false
     t.datetime :published_at
     t.timestamps
   end

@@ -125,6 +125,26 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Rails", response.body
   end
 
+  test "create with pinned creates pinned post" do
+    post herald.posts_path, params: {
+      herald_post: {title: "Pinned Post", pinned: true}
+    }
+    assert Herald::Post.last.pinned
+  end
+
+  test "new form includes pinned checkbox" do
+    get herald.new_post_path
+    assert_response :success
+    assert_match "pinned", response.body
+  end
+
+  test "index shows pinned indicator" do
+    @post.update!(pinned: true)
+    get herald.posts_path
+    assert_response :success
+    assert_match "Pinned", response.body
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success

@@ -29,7 +29,7 @@ module Herald
     validates :title, presence: true
     validates :slug, presence: true, uniqueness: true
 
-    scope :recently_published, -> { published.where.not(published_at: nil).order(published_at: :desc) }
+    scope :recently_published, -> { published.where.not(published_at: nil).order(pinned: :desc, published_at: :desc) }
     scope :for_category, ->(category_id) {
       if category_id.present?
         joins(:post_categories).where(herald_post_categories: {herald_category_id: category_id})
