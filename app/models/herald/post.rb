@@ -16,6 +16,16 @@ module Herald
 
     enum :status, {draft: 0, published: 1}
 
+    def tag_list
+      tags.map(&:name).join(", ")
+    end
+
+    def tag_list=(names)
+      self.tags = names.split(",").map(&:strip).reject(&:blank?).map do |name|
+        Herald::Tag.find_or_create_by!(name: name)
+      end
+    end
+
     validates :title, presence: true
     validates :slug, presence: true, uniqueness: true
 
