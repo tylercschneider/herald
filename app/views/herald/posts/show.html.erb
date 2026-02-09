@@ -29,7 +29,7 @@
 
     <% if @post.featured_image.attached? %>
       <div class="mb-4">
-        <%= image_tag @post.featured_image, class: "w-full rounded-lg" %>
+        <%= image_tag @post.featured_image, class: "w-full rounded-lg", loading: "lazy" %>
       </div>
     <% end %>
 
