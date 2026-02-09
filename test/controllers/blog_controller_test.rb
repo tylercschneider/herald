@@ -102,6 +102,14 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "application/rss+xml", response.content_type
   end
 
+  test "atom feed returns Atom XML" do
+    get herald.blog_atom_path(format: :atom)
+    assert_response :success
+    assert_match "application/atom+xml", response.content_type
+    assert_match "Published Post", response.body
+    assert_match "xmlns", response.body
+  end
+
   test "index filters posts by search query" do
     Herald::Post.create!(
       title: "Rails Guide",

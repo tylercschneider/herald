@@ -40,6 +40,13 @@ module Herald
       end
     end
 
+    def atom
+      @posts = Herald::Post.recently_published.limit(20)
+      respond_to do |format|
+        format.atom
+      end
+    end
+
     def feed
       @posts = Herald::Post.recently_published.limit(20)
       respond_to do |format|

@@ -4,6 +4,7 @@ Herald::Engine.routes.draw do
   # Public blog
   get "blog", to: "blog#index", as: :blog
   get "blog/feed", to: "blog#feed", as: :blog_feed, defaults: {format: :rss}
+  get "blog/atom", to: "blog#atom", as: :blog_atom, defaults: {format: :atom}
   get "blog/sitemap", to: "blog#sitemap", as: :blog_sitemap, defaults: {format: :xml}
   get "blog/category/:slug", to: "blog#category", as: :blog_category
   get "blog/tag/:slug", to: "blog#tag", as: :blog_tag
