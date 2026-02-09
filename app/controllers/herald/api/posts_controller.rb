@@ -109,6 +109,7 @@ module Herald
           categories: post.categories.map { |c| {id: c.id, name: c.name, slug: c.slug} },
           tags: post.tags.map { |t| {id: t.id, name: t.name, slug: t.slug} },
           reading_time: post.reading_time,
+          views_count: post.views_count,
           created_at: post.created_at,
           updated_at: post.updated_at
         }

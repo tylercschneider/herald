@@ -72,6 +72,19 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match 'name="twitter:title"', response.body
   end
 
+  test "show increments view count" do
+    assert_equal 0, @published_post.views_count
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_equal 1, @published_post.reload.views_count
+  end
+
+  test "show does not increment view count for bots" do
+    get herald.blog_post_path(@published_post.slug), headers: {"HTTP_USER_AGENT" => "Googlebot/2.1"}
+    assert_response :success
+    assert_equal 0, @published_post.reload.views_count
+  end
+
   test "show returns 404 for draft post" do
     get herald.blog_post_path(@draft_post.slug)
     assert_response :not_found

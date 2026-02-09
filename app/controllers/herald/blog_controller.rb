@@ -14,6 +14,7 @@ module Herald
     def show
       @post = Herald::Post.published.find_by!(slug: params[:slug])
       @meta_tags = @post.to_meta_tags
+      @post.increment!(:views_count) unless bot_request?
     rescue ActiveRecord::RecordNotFound
       render plain: "Not Found", status: :not_found
     end
@@ -52,6 +53,14 @@ module Herald
       respond_to do |format|
         format.rss
       end
+    end
+
+    private
+
+    BOT_PATTERNS = /bot|crawl|spider|slurp|mediapartners|facebookexternalhit|bingpreview/i
+
+    def bot_request?
+      request.user_agent.to_s.match?(BOT_PATTERNS)
     end
   end
 end
