@@ -168,6 +168,25 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Pinned", response.body
   end
 
+  test "preview renders draft post as public blog view" do
+    get herald.preview_post_path(@post)
+    assert_response :success
+    assert_match "Existing Post", response.body
+    assert_match "prose", response.body
+  end
+
+  test "show displays preview link" do
+    get herald.post_path(@post)
+    assert_response :success
+    assert_match "Preview", response.body
+  end
+
+  test "preview requires authentication" do
+    sign_out
+    get herald.preview_post_path(@post)
+    assert_response :unauthorized
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success

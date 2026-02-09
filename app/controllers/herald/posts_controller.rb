@@ -4,7 +4,7 @@ module Herald
   class PostsController < BaseController
     include ::Pagy::Method
 
-    before_action :set_post, only: [:show, :edit, :update, :destroy]
+    before_action :set_post, only: [:show, :edit, :update, :destroy, :preview]
 
     def index
       posts = Herald::Post.search(params[:q]).for_category(params[:category]).order(created_at: :desc)
@@ -42,6 +42,10 @@ module Herald
       else
         render :edit, status: :unprocessable_content
       end
+    end
+
+    def preview
+      render template: "herald/blog/show", layout: Herald.config.blog_layout
     end
 
     def destroy

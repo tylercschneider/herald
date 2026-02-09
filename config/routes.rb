@@ -9,7 +9,9 @@ Herald::Engine.routes.draw do
   get "blog/:slug", to: "blog#show", as: :blog_post
 
   # Admin
-  resources :posts
+  resources :posts do
+    get :preview, on: :member
+  end
   resources :categories, except: [:show]
 
   # API
