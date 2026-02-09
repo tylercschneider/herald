@@ -12,6 +12,8 @@ module Herald
     has_many :post_tags, class_name: "Herald::PostTag", foreign_key: :herald_post_id, dependent: :destroy, inverse_of: :post
     has_many :tags, through: :post_tags
 
+    has_many :revisions, class_name: "Herald::Revision", foreign_key: :herald_post_id, dependent: :destroy
+
     has_rich_text :body
     has_one_attached :featured_image
 
@@ -56,6 +58,7 @@ module Herald
 
     before_validation :generate_slug, on: :create
 
+    before_update :snapshot_revision, if: :content_changed?
     after_commit :deliver_publish_webhook, if: -> { saved_change_to_status? && published? }
 
     def publish!
@@ -71,6 +74,12 @@ module Herald
       publish!
     end
 
+    def reading_time
+      text = body.to_plain_text
+      words = text.split.size
+      [(words / 200.0).ceil, 1].max
+    end
+
     def to_meta_tags
       {
         title: title,
@@ -80,6 +89,19 @@ module Herald
     end
 
     private
+
+    def content_changed?
+      title_changed? || excerpt_changed?
+    end
+
+    def snapshot_revision
+      revisions.create!(
+        user: user,
+        title: title_was,
+        excerpt: excerpt_was,
+        body_text: body.to_plain_text
+      )
+    end
 
     def deliver_publish_webhook
       return unless Herald.config.webhook_url.present?

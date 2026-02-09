@@ -186,10 +186,24 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_equal true, response.parsed_body["pinned"]
   end
 
+  test "show includes reading_time in response" do
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert_equal 1, response.parsed_body["reading_time"]
+  end
+
   test "show includes featured_image_url as null when no image" do
     get herald.api_post_path(@post), as: :json
     assert_response :success
     assert_nil response.parsed_body["featured_image_url"]
+  end
+
+  test "show includes body and body_plain_text" do
+    @post.update!(body: "<p>Hello <strong>world</strong></p>")
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    assert response.parsed_body["body"].present?
+    assert_equal "Hello world", response.parsed_body["body_plain_text"]
   end
 
   test "unauthorized without authentication" do
