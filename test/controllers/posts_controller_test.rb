@@ -168,6 +168,18 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Pinned", response.body
   end
 
+  test "update with custom slug changes slug" do
+    patch herald.post_path(@post), params: {herald_post: {slug: "my-custom-slug"}}
+    assert_redirected_to herald.post_path(@post)
+    assert_equal "my-custom-slug", @post.reload.slug
+  end
+
+  test "edit form includes slug field" do
+    get herald.edit_post_path(@post)
+    assert_response :success
+    assert_match "post[slug]", response.body
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success

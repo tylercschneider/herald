@@ -39,6 +39,17 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal original_slug, post.slug
   end
 
+  test "allows manual slug override on update" do
+    post = Herald::Post.create!(title: "Original Title", user: @user)
+    post.update!(slug: "custom-slug")
+    assert_equal "custom-slug", post.reload.slug
+  end
+
+  test "allows manual slug on create" do
+    post = Herald::Post.create!(title: "My Post", user: @user, slug: "my-custom-slug")
+    assert_equal "my-custom-slug", post.slug
+  end
+
   test "slug must be globally unique" do
     Herald::Post.create!(title: "Unique Post", user: @user)
     post2 = Herald::Post.new(title: "Different Title", slug: "unique-post", user: @user)
