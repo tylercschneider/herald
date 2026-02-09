@@ -40,6 +40,13 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "Published Post", response.body
   end
 
+  test "show includes canonical URL link tag" do
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_match 'rel="canonical"', response.body
+    assert_match "/blog/published-post", response.body
+  end
+
   test "show returns 404 for draft post" do
     get herald.blog_post_path(@draft_post.slug)
     assert_response :not_found
