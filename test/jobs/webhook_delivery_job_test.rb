@@ -57,6 +57,22 @@ class Herald::WebhookDeliveryJobTest < ActiveSupport::TestCase
     assert_nil @sent_requests.first[:headers]["X-Herald-Signature"]
   end
 
+  test "network errors bubble up from perform for ActiveJob retry" do
+    job = Herald::WebhookDeliveryJob.new
+
+    Net::HTTP.define_singleton_method(:post) do |_uri, _body, _headers|
+      raise SocketError, "Failed to connect"
+    end
+
+    assert_raises(SocketError) do
+      job.perform("post.published", @post.id)
+    end
+  ensure
+    Net::HTTP.define_singleton_method(:post) do |uri, body, headers = {}|
+      Net::HTTPOK.new("1.1", "200", "OK")
+    end
+  end
+
   private
 
   def capture_http_posts

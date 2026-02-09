@@ -1,7 +1,8 @@
+<% author_table = Herald.config.author_class.underscore.pluralize %>
 class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
   def change
     create_table :herald_posts do |t|
-      t.references :user, null: false, foreign_key: true
+      t.references :<%= Herald.config.author_class.underscore %>, null: false, foreign_key: { to_table: :<%= author_table %> }
       t.string :title, null: false
       t.string :slug, null: false
       t.text :excerpt
@@ -58,8 +59,8 @@ class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.c
     add_index :herald_post_tags, [:herald_post_id, :herald_tag_id], unique: true, name: "idx_herald_post_tags_unique"
 
     create_table :herald_revisions do |t|
-      t.references :herald_post, null: false, foreign_key: true
-      t.references :user, null: false, foreign_key: true
+      t.references :herald_post, null: false, foreign_key: { on_delete: :cascade }
+      t.references :<%= Herald.config.author_class.underscore %>, null: false, foreign_key: { to_table: :<%= author_table %> }
       t.string :title, null: false
       t.text :excerpt
       t.text :body_text
