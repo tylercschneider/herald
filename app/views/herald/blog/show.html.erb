@@ -1,5 +1,18 @@
 <link rel="canonical" href="<%= blog_post_url(@post.slug) %>">
 
+<script type="application/ld+json">
+<%= raw({
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": @post.title,
+  "description": @post.meta_description.presence || @post.excerpt,
+  "author": {"@type": "Person", "name": @post.user.name},
+  "datePublished": @post.published_at&.iso8601,
+  "dateModified": @post.updated_at.iso8601,
+  "url": blog_post_url(@post.slug)
+}.compact.to_json) %>
+</script>
+
 <div class="py-16 max-w-3xl m-auto px-4">
   <article>
     <header class="mb-8">
