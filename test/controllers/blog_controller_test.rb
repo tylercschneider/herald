@@ -47,6 +47,14 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "/blog/published-post", response.body
   end
 
+  test "show includes JSON-LD Article structured data" do
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_match "application/ld+json", response.body
+    assert_match '"@type":"Article"', response.body
+    assert_match "Published Post", response.body
+  end
+
   test "show returns 404 for draft post" do
     get herald.blog_post_path(@draft_post.slug)
     assert_response :not_found
