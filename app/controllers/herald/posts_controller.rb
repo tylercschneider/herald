@@ -24,6 +24,8 @@ module Herald
       @post.user = herald_author
       @post.published_at = Time.current if @post.published?
 
+      assign_new_category(@post)
+
       if @post.save
         redirect_to post_path(@post), notice: "Post created."
       else
@@ -38,6 +40,7 @@ module Herald
       @post.published_at ||= Time.current if post_params[:status] == "published"
 
       if @post.update(post_params)
+        assign_new_category(@post)
         redirect_to post_path(@post), notice: "Post updated."
       else
         render :edit, status: :unprocessable_content
@@ -55,6 +58,14 @@ module Herald
       @post = Herald::Post.find(params[:id])
     rescue ActiveRecord::RecordNotFound
       render plain: "Not Found", status: :not_found
+    end
+
+    def assign_new_category(post)
+      name = params.dig(:herald_post, :new_category_name)
+      return if name.blank?
+
+      category = Herald::Category.find_or_create_by!(name: name.strip)
+      post.categories << category unless post.categories.include?(category)
     end
 
     def post_params
