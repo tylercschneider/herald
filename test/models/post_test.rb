@@ -311,6 +311,28 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_not_includes related, subject
   end
 
+  test "related_posts excludes drafts and respects limit" do
+    cat = Herald::Category.create!(name: "Shared")
+
+    subject = Herald::Post.create!(title: "Subject", user: @user, status: :published, published_at: 1.day.ago)
+    subject.categories << cat
+
+    published_a = Herald::Post.create!(title: "Published A", user: @user, status: :published, published_at: 2.days.ago)
+    published_a.categories << cat
+
+    published_b = Herald::Post.create!(title: "Published B", user: @user, status: :published, published_at: 3.days.ago)
+    published_b.categories << cat
+
+    draft = Herald::Post.create!(title: "Draft Related", user: @user, status: :draft)
+    draft.categories << cat
+
+    related_all = subject.related_posts
+    assert_not_includes related_all, draft
+
+    related_limited = subject.related_posts(1)
+    assert_equal 1, related_limited.size
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
