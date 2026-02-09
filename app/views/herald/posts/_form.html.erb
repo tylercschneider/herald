@@ -53,10 +53,10 @@
     <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Comma-separated list of tags.</p>
   </div>
 
-  <% if Herald::Category.any? %>
-    <div>
-      <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</span>
-      <div class="flex flex-wrap gap-3">
+  <div>
+    <span class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Categories</span>
+    <% if Herald::Category.any? %>
+      <div class="flex flex-wrap gap-3 mb-3">
         <% Herald::Category.ordered.each do |category| %>
           <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
             <%= form.check_box :category_ids, { multiple: true, checked: post.category_ids.include?(category.id) }, category.id, nil %>
@@ -64,8 +64,9 @@
           </label>
         <% end %>
       </div>
-    </div>
-  <% end %>
+    <% end %>
+    <%= form.text_field :new_category_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white sm:text-sm", placeholder: "Add new category..." %>
+  </div>
 
   <div>
     <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">

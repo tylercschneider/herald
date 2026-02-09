@@ -207,6 +207,30 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Existing Post", response.body
   end
 
+  test "create with new_category_name creates category and associates it" do
+    assert_difference("Herald::Category.count") do
+      post herald.posts_path, params: {
+        herald_post: {title: "Categorized Post", new_category_name: "New Category"}
+      }
+    end
+    created_post = Herald::Post.last
+    assert_includes created_post.categories.map(&:name), "New Category"
+  end
+
+  test "update with new_category_name adds new category" do
+    patch herald.post_path(@post), params: {
+      herald_post: {new_category_name: "Another Category"}
+    }
+    assert_redirected_to herald.post_path(@post)
+    assert_includes @post.reload.categories.map(&:name), "Another Category"
+  end
+
+  test "form includes new category name field" do
+    get herald.new_post_path
+    assert_response :success
+    assert_match "new_category_name", response.body
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success
