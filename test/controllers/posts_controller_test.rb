@@ -168,6 +168,37 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Pinned", response.body
   end
 
+  test "update with custom slug changes slug" do
+    patch herald.post_path(@post), params: {herald_post: {slug: "my-custom-slug"}}
+    assert_redirected_to herald.post_path(@post)
+    assert_equal "my-custom-slug", @post.reload.slug
+  end
+
+  test "edit form includes slug field" do
+    get herald.edit_post_path(@post)
+    assert_response :success
+    assert_match "post[slug]", response.body
+  end
+
+  test "preview renders draft post as public blog view" do
+    get herald.preview_post_path(@post)
+    assert_response :success
+    assert_match "Existing Post", response.body
+    assert_match "prose", response.body
+  end
+
+  test "show displays preview link" do
+    get herald.post_path(@post)
+    assert_response :success
+    assert_match "Preview", response.body
+  end
+
+  test "preview requires authentication" do
+    sign_out
+    get herald.preview_post_path(@post)
+    assert_response :unauthorized
+  end
+
   test "show displays revision history after edits" do
     @post.update!(title: "Updated Title")
     get herald.post_path(@post)

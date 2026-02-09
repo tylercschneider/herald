@@ -89,7 +89,7 @@ module Herald
       end
 
       def post_params
-        params.require(:herald_post).permit(:title, :body, :excerpt, :meta_description, :og_image, :status, category_ids: [])
+        params.require(:herald_post).permit(:title, :slug, :body, :excerpt, :meta_description, :og_image, :status, category_ids: [])
       end
 
       def post_json(post)
@@ -99,6 +99,7 @@ module Herald
           slug: post.slug,
           excerpt: post.excerpt,
           body: post.body.to_s,
+          body_plain_text: post.body.to_plain_text,
           meta_description: post.meta_description,
           status: post.status,
           published_at: post.published_at,
@@ -107,6 +108,7 @@ module Herald
           featured_image_url: post.featured_image.attached? ? Rails.application.routes.url_helpers.rails_blob_url(post.featured_image, only_path: true) : nil,
           categories: post.categories.map { |c| {id: c.id, name: c.name, slug: c.slug} },
           tags: post.tags.map { |t| {id: t.id, name: t.name, slug: t.slug} },
+          reading_time: post.reading_time,
           created_at: post.created_at,
           updated_at: post.updated_at
         }

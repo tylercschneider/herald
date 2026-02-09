@@ -4,7 +4,7 @@ module Herald
   class PostsController < BaseController
     include ::Pagy::Method
 
-    before_action :set_post, only: [:show, :edit, :update, :destroy]
+    before_action :set_post, only: [:show, :edit, :update, :destroy, :preview]
 
     def index
       posts = Herald::Post.search(params[:q]).for_category(params[:category]).order(created_at: :desc)
@@ -44,6 +44,10 @@ module Herald
       end
     end
 
+    def preview
+      render template: "herald/blog/show", layout: Herald.config.blog_layout
+    end
+
     def destroy
       @post.destroy
       redirect_to posts_path, notice: "Post deleted.", status: :see_other
@@ -58,7 +62,7 @@ module Herald
     end
 
     def post_params
-      params.require(:herald_post).permit(:title, :body, :excerpt, :meta_description, :og_image, :status, :pinned, :featured_image, :tag_list, :published_at, category_ids: [])
+      params.require(:herald_post).permit(:title, :slug, :body, :excerpt, :meta_description, :og_image, :status, :pinned, :featured_image, :tag_list, :published_at, category_ids: [])
     end
   end
 end
