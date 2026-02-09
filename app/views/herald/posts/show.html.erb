@@ -2,12 +2,12 @@
   <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= @post.title %></h1>
     <div class="flex items-center gap-3">
-      <%= link_to "Preview", preview_post_path(@post), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
+      <%= link_to "Preview", herald.preview_post_path(@post), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
       <% if @post.published? %>
-        <%= link_to "View on blog", blog_post_path(@post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
+        <%= link_to "View on blog", herald.blog_post_path(@post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
       <% end %>
-      <%= link_to "Edit", edit_post_path(@post), class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
-      <%= button_to "Delete", post_path(@post), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete this post?" } %>
+      <%= link_to "Edit", herald.edit_post_path(@post), class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
+      <%= button_to "Delete", herald.post_path(@post), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete this post?" } %>
     </div>
   </div>
 

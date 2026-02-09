@@ -5,7 +5,7 @@
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Blog Categories</h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Organize your blog posts</p>
       </div>
-      <%= link_to "New Category", new_category_path, class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
+      <%= link_to "New Category", herald.new_category_path, class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
     </div>
   </div>
 
@@ -21,8 +21,8 @@
               <% end %>
             </div>
             <div class="flex gap-2">
-              <%= link_to "Edit", edit_category_path(category), class: "text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
-              <%= button_to "Delete", category_path(category), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete #{category.name}?" } %>
+              <%= link_to "Edit", herald.edit_category_path(category), class: "text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+              <%= button_to "Delete", herald.category_path(category), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete #{category.name}?" } %>
             </div>
           </li>
         <% end %>

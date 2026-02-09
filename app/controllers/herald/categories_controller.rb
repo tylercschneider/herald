@@ -16,7 +16,7 @@ module Herald
       @category = Herald::Category.new(category_params)
 
       if @category.save
-        redirect_to categories_path, notice: "Category created."
+        redirect_to herald.categories_path, notice: "Category created."
       else
         render :new, status: :unprocessable_content
       end
@@ -27,7 +27,7 @@ module Herald
 
     def update
       if @category.update(category_params)
-        redirect_to categories_path, notice: "Category updated."
+        redirect_to herald.categories_path, notice: "Category updated."
       else
         render :edit, status: :unprocessable_content
       end
@@ -35,7 +35,7 @@ module Herald
 
     def destroy
       @category.destroy
-      redirect_to categories_path, notice: "Category deleted.", status: :see_other
+      redirect_to herald.categories_path, notice: "Category deleted.", status: :see_other
     end
 
     private
