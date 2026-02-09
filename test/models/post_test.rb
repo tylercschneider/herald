@@ -280,6 +280,11 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal 2, post.reading_time
   end
 
+  test "related_posts returns empty for post with no categories or tags" do
+    post = Herald::Post.create!(title: "Lonely Post", user: @user, status: :published, published_at: 1.day.ago)
+    assert_equal [], post.related_posts
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)

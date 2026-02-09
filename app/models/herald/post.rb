@@ -88,6 +88,14 @@ module Herald
       }
     end
 
+    def related_posts(limit = 5)
+      cat_ids = post_categories.pluck(:herald_category_id)
+      tag_ids = post_tags.pluck(:herald_tag_id)
+      return [] if cat_ids.empty? && tag_ids.empty?
+
+      []
+    end
+
     private
 
     def content_changed?
