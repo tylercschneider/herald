@@ -285,6 +285,32 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal [], post.related_posts
   end
 
+  test "related_posts ranks by shared categories and tags, excludes self and unrelated" do
+    cat_a = Herald::Category.create!(name: "Cat A")
+    cat_b = Herald::Category.create!(name: "Cat B")
+    tag_x = Herald::Tag.create!(name: "Tag X")
+
+    subject = Herald::Post.create!(title: "Subject", user: @user, status: :published, published_at: 1.day.ago)
+    subject.categories << [cat_a, cat_b]
+    subject.tags << tag_x
+
+    # shares 2 cats + 1 tag = score 3
+    best_match = Herald::Post.create!(title: "Best Match", user: @user, status: :published, published_at: 2.days.ago)
+    best_match.categories << [cat_a, cat_b]
+    best_match.tags << tag_x
+
+    # shares 1 cat = score 1
+    partial_match = Herald::Post.create!(title: "Partial Match", user: @user, status: :published, published_at: 3.days.ago)
+    partial_match.categories << cat_a
+
+    # shares nothing
+    Herald::Post.create!(title: "Unrelated", user: @user, status: :published, published_at: 4.days.ago)
+
+    related = subject.related_posts
+    assert_equal [best_match, partial_match], related
+    assert_not_includes related, subject
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
