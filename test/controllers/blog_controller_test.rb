@@ -192,6 +192,30 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "category/tech", response.body
   end
 
+  test "show displays related posts with links" do
+    category = Herald::Category.create!(name: "Ruby")
+    @published_post.categories << category
+    related = Herald::Post.create!(
+      title: "Related Post",
+      user: @user,
+      excerpt: "Related excerpt",
+      status: :published,
+      published_at: 2.days.ago
+    )
+    related.categories << category
+
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_match "Related Posts", response.body
+    assert_select "a[href='#{herald.blog_post_path(related.slug)}']", text: "Related Post"
+  end
+
+  test "show hides related posts section when none exist" do
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_no_match "Related Posts", response.body
+  end
+
   test "tag only shows published posts" do
     tag = Herald::Tag.create!(name: "Ruby")
     @published_post.tags << tag

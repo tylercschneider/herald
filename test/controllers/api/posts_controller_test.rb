@@ -206,6 +206,46 @@ class Herald::Api::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "Hello world", response.parsed_body["body_plain_text"]
   end
 
+  test "show includes related_posts array" do
+    category = Herald::Category.create!(name: "Ruby")
+    @post.categories << category
+    related = Herald::Post.create!(title: "Related API Post", user: @user, slug: "related-api-post", excerpt: "Related excerpt", status: :published, published_at: 2.days.ago)
+    related.categories << category
+
+    get herald.api_post_path(@post), as: :json
+    assert_response :success
+    related_posts = response.parsed_body["related_posts"]
+    assert_kind_of Array, related_posts
+    assert_equal 1, related_posts.size
+    rp = related_posts.first
+    assert_equal related.id, rp["id"]
+    assert_equal "Related API Post", rp["title"]
+    assert_equal "related-api-post", rp["slug"]
+    assert_equal "Related excerpt", rp["excerpt"]
+    assert_includes rp.keys, "published_at"
+    assert_includes rp.keys, "featured_image_url"
+  end
+
+  test "by_slug includes related_posts array" do
+    category = Herald::Category.create!(name: "Ruby")
+    @post.categories << category
+    related = Herald::Post.create!(title: "Related Slug Post", user: @user, excerpt: "Excerpt", status: :published, published_at: 2.days.ago)
+    related.categories << category
+
+    get herald.by_slug_api_posts_path(slug: @post.slug), as: :json
+    assert_response :success
+    assert_kind_of Array, response.parsed_body["related_posts"]
+    assert_equal 1, response.parsed_body["related_posts"].size
+  end
+
+  test "index does not include related_posts" do
+    @post.publish!
+    get herald.api_posts_path, as: :json
+    assert_response :success
+    post_data = response.parsed_body["data"].first
+    assert_not_includes post_data.keys, "related_posts"
+  end
+
   test "unauthorized without authentication" do
     sign_out
     get herald.api_posts_path, as: :json

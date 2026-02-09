@@ -88,6 +88,37 @@ module Herald
       }
     end
 
+    def related_posts(limit = 5)
+      cat_ids = post_categories.pluck(:herald_category_id)
+      tag_ids = post_tags.pluck(:herald_tag_id)
+      return [] if cat_ids.empty? && tag_ids.empty?
+
+      scores = Hash.new(0)
+
+      if cat_ids.any?
+        Herald::PostCategory
+          .where(herald_category_id: cat_ids)
+          .where.not(herald_post_id: id)
+          .group(:herald_post_id)
+          .count
+          .each { |post_id, count| scores[post_id] += count }
+      end
+
+      if tag_ids.any?
+        Herald::PostTag
+          .where(herald_tag_id: tag_ids)
+          .where.not(herald_post_id: id)
+          .group(:herald_post_id)
+          .count
+          .each { |post_id, count| scores[post_id] += count }
+      end
+
+      return [] if scores.empty?
+
+      ranked_ids = scores.sort_by { |_, score| -score }.map(&:first)
+      self.class.published.where(id: ranked_ids).sort_by { |p| ranked_ids.index(p.id) }.first(limit)
+    end
+
     private
 
     def content_changed?

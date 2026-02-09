@@ -280,6 +280,59 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal 2, post.reading_time
   end
 
+  test "related_posts returns empty for post with no categories or tags" do
+    post = Herald::Post.create!(title: "Lonely Post", user: @user, status: :published, published_at: 1.day.ago)
+    assert_equal [], post.related_posts
+  end
+
+  test "related_posts ranks by shared categories and tags, excludes self and unrelated" do
+    cat_a = Herald::Category.create!(name: "Cat A")
+    cat_b = Herald::Category.create!(name: "Cat B")
+    tag_x = Herald::Tag.create!(name: "Tag X")
+
+    subject = Herald::Post.create!(title: "Subject", user: @user, status: :published, published_at: 1.day.ago)
+    subject.categories << [cat_a, cat_b]
+    subject.tags << tag_x
+
+    # shares 2 cats + 1 tag = score 3
+    best_match = Herald::Post.create!(title: "Best Match", user: @user, status: :published, published_at: 2.days.ago)
+    best_match.categories << [cat_a, cat_b]
+    best_match.tags << tag_x
+
+    # shares 1 cat = score 1
+    partial_match = Herald::Post.create!(title: "Partial Match", user: @user, status: :published, published_at: 3.days.ago)
+    partial_match.categories << cat_a
+
+    # shares nothing
+    Herald::Post.create!(title: "Unrelated", user: @user, status: :published, published_at: 4.days.ago)
+
+    related = subject.related_posts
+    assert_equal [best_match, partial_match], related
+    assert_not_includes related, subject
+  end
+
+  test "related_posts excludes drafts and respects limit" do
+    cat = Herald::Category.create!(name: "Shared")
+
+    subject = Herald::Post.create!(title: "Subject", user: @user, status: :published, published_at: 1.day.ago)
+    subject.categories << cat
+
+    published_a = Herald::Post.create!(title: "Published A", user: @user, status: :published, published_at: 2.days.ago)
+    published_a.categories << cat
+
+    published_b = Herald::Post.create!(title: "Published B", user: @user, status: :published, published_at: 3.days.ago)
+    published_b.categories << cat
+
+    draft = Herald::Post.create!(title: "Draft Related", user: @user, status: :draft)
+    draft.categories << cat
+
+    related_all = subject.related_posts
+    assert_not_includes related_all, draft
+
+    related_limited = subject.related_posts(1)
+    assert_equal 1, related_limited.size
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)

@@ -62,6 +62,25 @@
     </div>
   </article>
 
+  <% related = @post.related_posts %>
+  <% if related.any? %>
+    <div class="mt-12 pt-8 border-t border-gray-200 dark:border-zinc-700">
+      <h2 class="text-2xl font-bold mb-6">Related Posts</h2>
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <% related.each do |post| %>
+          <div class="rounded-lg border border-gray-200 dark:border-zinc-700 p-4">
+            <h3 class="font-semibold mb-2">
+              <%= link_to post.title, blog_post_path(post.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+            </h3>
+            <% if post.excerpt.present? %>
+              <p class="text-sm text-gray-600 dark:text-gray-400"><%= truncate(post.excerpt, length: 120) %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="mt-12 pt-8 border-t border-gray-200 dark:border-zinc-700">
     <%= link_to "&larr; Back to Blog".html_safe, blog_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
   </div>
