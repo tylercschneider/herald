@@ -199,6 +199,14 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unauthorized
   end
 
+  test "show displays revision history after edits" do
+    @post.update!(title: "Updated Title")
+    get herald.post_path(@post)
+    assert_response :success
+    assert_match "Revision History", response.body
+    assert_match "Existing Post", response.body
+  end
+
   test "new form includes tag_list field" do
     get herald.new_post_path
     assert_response :success

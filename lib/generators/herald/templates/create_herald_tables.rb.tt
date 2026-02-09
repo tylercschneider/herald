@@ -55,5 +55,17 @@ class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.c
     end
 
     add_index :herald_post_tags, [:herald_post_id, :herald_tag_id], unique: true, name: "idx_herald_post_tags_unique"
+
+    create_table :herald_revisions do |t|
+      t.references :herald_post, null: false, foreign_key: true
+      t.references :user, null: false, foreign_key: true
+      t.string :title, null: false
+      t.text :excerpt
+      t.text :body_text
+
+      t.timestamps
+    end
+
+    add_index :herald_revisions, [:herald_post_id, :created_at]
   end
 end
