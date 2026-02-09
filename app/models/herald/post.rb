@@ -71,6 +71,12 @@ module Herald
       publish!
     end
 
+    def reading_time
+      text = body.to_plain_text
+      words = text.split.size
+      [(words / 200.0).ceil, 1].max
+    end
+
     def to_meta_tags
       {
         title: title,

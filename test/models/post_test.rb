@@ -249,6 +249,26 @@ class Herald::PostTest < ActiveSupport::TestCase
     end
   end
 
+  test "reading_time returns 1 min for short posts" do
+    post = Herald::Post.create!(title: "Short", user: @user, body: "Hello world")
+    assert_equal 1, post.reading_time
+  end
+
+  test "reading_time calculates based on 200 words per minute" do
+    post = Herald::Post.create!(title: "Long", user: @user, body: "word " * 600)
+    assert_equal 3, post.reading_time
+  end
+
+  test "reading_time returns 1 for post with no body" do
+    post = Herald::Post.create!(title: "Empty", user: @user)
+    assert_equal 1, post.reading_time
+  end
+
+  test "reading_time is included in API post JSON" do
+    post = Herald::Post.create!(title: "API Reading", user: @user, body: "word " * 400)
+    assert_equal 2, post.reading_time
+  end
+
   test "recently_published orders pinned posts first" do
     old_post = Herald::Post.create!(title: "Old", user: @user, status: :published, published_at: 1.week.ago)
     new_post = Herald::Post.create!(title: "New", user: @user, status: :published, published_at: 1.day.ago)
