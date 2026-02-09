@@ -55,6 +55,23 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_match "Published Post", response.body
   end
 
+  test "show includes Open Graph meta tags" do
+    @published_post.update!(excerpt: "A great post")
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_match 'property="og:title"', response.body
+    assert_match 'property="og:type" content="article"', response.body
+    assert_match 'property="og:description"', response.body
+    assert_match 'property="og:url"', response.body
+  end
+
+  test "show includes Twitter Card meta tags" do
+    get herald.blog_post_path(@published_post.slug)
+    assert_response :success
+    assert_match 'name="twitter:card" content="summary"', response.body
+    assert_match 'name="twitter:title"', response.body
+  end
+
   test "show returns 404 for draft post" do
     get herald.blog_post_path(@draft_post.slug)
     assert_response :not_found
