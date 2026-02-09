@@ -58,4 +58,21 @@
       </div>
     <% end %>
   </div>
+
+  <% if @post.revisions.any? %>
+    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:bg-zinc-900 dark:border-zinc-700">
+      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revision History</h2>
+      <div class="space-y-3">
+        <% @post.revisions.each do |revision| %>
+          <div class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-zinc-800 last:border-0">
+            <div>
+              <span class="text-sm font-medium text-gray-900 dark:text-white"><%= revision.title %></span>
+              <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">by <%= revision.user.name %></span>
+            </div>
+            <span class="text-xs text-gray-500 dark:text-gray-400"><%= revision.created_at.strftime("%b %-d, %Y %l:%M %p") %></span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
 <% end %>
