@@ -29,12 +29,12 @@ module Herald
       end
 
       def show
-        render json: post_json(@post)
+        render json: post_json(@post, include_related: true)
       end
 
       def by_slug
         post = Herald::Post.find_by!(slug: params[:slug])
-        render json: post_json(post)
+        render json: post_json(post, include_related: true)
       end
 
       def bulk
@@ -92,8 +92,8 @@ module Herald
         params.require(:herald_post).permit(:title, :slug, :body, :excerpt, :meta_description, :og_image, :status, category_ids: [])
       end
 
-      def post_json(post)
-        {
+      def post_json(post, include_related: false)
+        json = {
           id: post.id,
           title: post.title,
           slug: post.slug,
@@ -113,6 +113,21 @@ module Herald
           created_at: post.created_at,
           updated_at: post.updated_at
         }
+
+        if include_related
+          json[:related_posts] = post.related_posts.map do |rp|
+            {
+              id: rp.id,
+              title: rp.title,
+              slug: rp.slug,
+              excerpt: rp.excerpt,
+              published_at: rp.published_at,
+              featured_image_url: rp.featured_image.attached? ? Rails.application.routes.url_helpers.rails_blob_url(rp.featured_image, only_path: true) : nil
+            }
+          end
+        end
+
+        json
       end
     end
   end
