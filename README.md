@@ -140,9 +140,45 @@ API responses use `data`/`meta` wrapping with pagination metadata:
 - Webhook delivery on publish (HMAC-SHA256 signed)
 - Bulk API operations
 
+## API Authentication
+
+Herald delegates API authentication to the host app via `api_authentication_method`. Define this method in your `ApplicationController` (or whichever controller Herald's API inherits from):
+
+```ruby
+class ApplicationController < ActionController::Base
+  def authenticate_api_user!
+    token = request.headers["Authorization"]&.remove("Bearer ")
+    @current_user = User.find_by(api_token: token)
+    head :unauthorized unless @current_user
+  end
+end
+```
+
+Herald's API controllers call this method as a `before_action`. The method name is configurable — set `config.api_authentication_method` to match your host app's method.
+
 ## Webhooks
 
-When `webhook_url` and `webhook_secret` are configured, Herald sends a POST request when a post is published. The payload is signed with HMAC-SHA256 in the `X-Herald-Signature` header.
+When `webhook_url` and `webhook_secret` are configured, Herald sends a POST request when a post is published. The payload is signed with HMAC-SHA256 in the `X-Herald-Signature` header. Delivery is retried up to 5 times with polynomial backoff on network errors.
+
+## Scheduled Publishing
+
+Herald includes a `Herald::PublishScheduledPostsJob` that publishes posts whose `published_at` is in the past but are still in draft status. You need to trigger this job on a recurring schedule in your host app.
+
+Example with cron (via [whenever](https://github.com/javan/whenever) or system crontab):
+
+```bash
+# Run every 5 minutes
+*/5 * * * * cd /path/to/app && bin/rails runner "Herald::PublishScheduledPostsJob.perform_later"
+```
+
+Or with [solid_queue](https://github.com/rails/solid_queue) recurring tasks:
+
+```yaml
+# config/recurring.yml
+publish_scheduled_posts:
+  class: Herald::PublishScheduledPostsJob
+  schedule: every 5 minutes
+```
 
 ## Dependencies
 
@@ -150,6 +186,7 @@ When `webhook_url` and `webhook_secret` are configured, Herald sends a POST requ
 - Ruby >= 3.0
 - PostgreSQL
 - [Pagy](https://github.com/ddnexus/pagy) >= 6.0
+- [Tailwind CSS](https://tailwindcss.com/) — Herald's built-in views use Tailwind utility classes. If your host app uses a different CSS framework, you can override any view by placing your own version at `app/views/herald/...` following standard Rails engine conventions.
 
 ## License
 

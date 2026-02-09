@@ -7,6 +7,8 @@ module Herald
   class WebhookDeliveryJob < ActiveJob::Base
     queue_as :default
 
+    retry_on StandardError, wait: :polynomially_longer, attempts: 5
+
     def perform(event, post_id)
       return unless Herald.config.webhook_url.present?
 
@@ -31,7 +33,9 @@ module Herald
         headers["X-Herald-Signature"] = signature
       end
 
+      Rails.logger.info("[Herald] Delivering webhook to #{Herald.config.webhook_url} for event #{event}")
       Net::HTTP.post(URI(Herald.config.webhook_url), payload, headers)
+      Rails.logger.info("[Herald] Webhook delivered successfully for event #{event}")
     end
   end
 end
