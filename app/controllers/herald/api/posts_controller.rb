@@ -99,6 +99,7 @@ module Herald
           slug: post.slug,
           excerpt: post.excerpt,
           body: post.body.to_s,
+          body_plain_text: post.body.to_plain_text,
           meta_description: post.meta_description,
           status: post.status,
           published_at: post.published_at,
