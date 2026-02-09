@@ -5,11 +5,11 @@
         <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Blog Posts</h1>
         <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage your blog content</p>
       </div>
-      <%= link_to "New Post", new_post_path, class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
+      <%= link_to "New Post", herald.new_post_path, class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
     </div>
   </div>
 
-  <%= form_tag posts_path, method: :get, class: "mt-6 flex gap-2" do %>
+  <%= form_tag herald.posts_path, method: :get, class: "mt-6 flex gap-2" do %>
     <%= text_field_tag :q, params[:q], placeholder: "Search posts...", autocomplete: "off", class: "flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
     <%= select_tag :category, options_for_select([["All Categories", ""]] + @categories.map { |c| [c.name, c.id] }, params[:category]), class: "rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
     <%= submit_tag "Search", class: "rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500" %>
@@ -22,7 +22,7 @@
           <li class="py-4">
             <div class="flex items-center justify-between">
               <div>
-                <%= link_to post_path(post), class: "text-gray-900 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400" do %>
+                <%= link_to herald.post_path(post), class: "text-gray-900 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400" do %>
                   <%= post.title %>
                 <% end %>
                 <div class="flex items-center gap-2 mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -42,9 +42,9 @@
                 </div>
               </div>
               <div class="flex gap-2">
-                <%= link_to "Edit", edit_post_path(post), class: "text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+                <%= link_to "Edit", herald.edit_post_path(post), class: "text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
                 <% if post.published? %>
-                  <%= link_to "View", blog_post_path(post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
+                  <%= link_to "View", herald.blog_post_path(post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
                 <% end %>
               </div>
             </div>

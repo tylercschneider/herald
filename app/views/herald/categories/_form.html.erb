@@ -1,4 +1,4 @@
-<%= form_with(model: category, url: category.persisted? ? category_path(category) : categories_path, class: "space-y-6") do |form| %>
+<%= form_with(model: category, url: category.persisted? ? herald.category_path(category) : herald.categories_path, class: "space-y-6") do |form| %>
   <% if category.errors.any? %>
     <div class="rounded-md bg-red-50 p-4 dark:bg-red-900/20">
       <ul class="list-disc pl-5 text-sm text-red-700 dark:text-red-400">
@@ -25,7 +25,7 @@
   </div>
 
   <div class="flex items-center justify-end gap-3">
-    <%= link_to "Cancel", categories_path, class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" %>
+    <%= link_to "Cancel", herald.categories_path, class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" %>
     <%= form.submit class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center cursor-pointer" %>
   </div>
 <% end %>

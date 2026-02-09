@@ -27,7 +27,7 @@ module Herald
       assign_new_category(@post)
 
       if @post.save
-        redirect_to post_path(@post), notice: "Post created."
+        redirect_to herald.post_path(@post), notice: "Post created."
       else
         render :new, status: :unprocessable_content
       end
@@ -41,7 +41,7 @@ module Herald
 
       if @post.update(post_params)
         assign_new_category(@post)
-        redirect_to post_path(@post), notice: "Post updated."
+        redirect_to herald.post_path(@post), notice: "Post updated."
       else
         render :edit, status: :unprocessable_content
       end
@@ -53,7 +53,7 @@ module Herald
 
     def destroy
       @post.destroy
-      redirect_to posts_path, notice: "Post deleted.", status: :see_other
+      redirect_to herald.posts_path, notice: "Post deleted.", status: :see_other
     end
 
     private
