@@ -62,7 +62,7 @@ module Herald
     end
 
     def post_params
-      params.require(:herald_post).permit(:title, :body, :excerpt, :meta_description, :og_image, :status, :pinned, :featured_image, :tag_list, :published_at, category_ids: [])
+      params.require(:herald_post).permit(:title, :slug, :body, :excerpt, :meta_description, :og_image, :status, :pinned, :featured_image, :tag_list, :published_at, category_ids: [])
     end
   end
 end

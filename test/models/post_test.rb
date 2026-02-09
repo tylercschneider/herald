@@ -39,6 +39,17 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_equal original_slug, post.slug
   end
 
+  test "allows manual slug override on update" do
+    post = Herald::Post.create!(title: "Original Title", user: @user)
+    post.update!(slug: "custom-slug")
+    assert_equal "custom-slug", post.reload.slug
+  end
+
+  test "allows manual slug on create" do
+    post = Herald::Post.create!(title: "My Post", user: @user, slug: "my-custom-slug")
+    assert_equal "my-custom-slug", post.slug
+  end
+
   test "slug must be globally unique" do
     Herald::Post.create!(title: "Unique Post", user: @user)
     post2 = Herald::Post.new(title: "Different Title", slug: "unique-post", user: @user)
@@ -247,6 +258,26 @@ class Herald::PostTest < ActiveSupport::TestCase
     assert_no_enqueued_jobs(only: Herald::WebhookDeliveryJob) do
       post.publish!
     end
+  end
+
+  test "reading_time returns 1 min for short posts" do
+    post = Herald::Post.create!(title: "Short", user: @user, body: "Hello world")
+    assert_equal 1, post.reading_time
+  end
+
+  test "reading_time calculates based on 200 words per minute" do
+    post = Herald::Post.create!(title: "Long", user: @user, body: "word " * 600)
+    assert_equal 3, post.reading_time
+  end
+
+  test "reading_time returns 1 for post with no body" do
+    post = Herald::Post.create!(title: "Empty", user: @user)
+    assert_equal 1, post.reading_time
+  end
+
+  test "reading_time is included in API post JSON" do
+    post = Herald::Post.create!(title: "API Reading", user: @user, body: "word " * 400)
+    assert_equal 2, post.reading_time
   end
 
   test "recently_published orders pinned posts first" do
