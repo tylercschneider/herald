@@ -122,6 +122,23 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     assert_response :not_found
   end
 
+  test "sitemap returns XML with published posts" do
+    get herald.blog_sitemap_path(format: :xml)
+    assert_response :success
+    assert_match "application/xml", response.content_type
+    assert_match "published-post", response.body
+    assert_no_match "draft-post", response.body
+  end
+
+  test "sitemap includes category pages" do
+    category = Herald::Category.create!(name: "Tech")
+    @published_post.categories << category
+
+    get herald.blog_sitemap_path(format: :xml)
+    assert_response :success
+    assert_match "category/tech", response.body
+  end
+
   test "tag only shows published posts" do
     tag = Herald::Tag.create!(name: "Ruby")
     @published_post.tags << tag

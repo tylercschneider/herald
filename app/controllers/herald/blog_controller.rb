@@ -32,6 +32,14 @@ module Herald
       render plain: "Not Found", status: :not_found
     end
 
+    def sitemap
+      @posts = Herald::Post.recently_published
+      @categories = Herald::Category.joins(:posts).where(herald_posts: {status: :published}).distinct
+      respond_to do |format|
+        format.xml
+      end
+    end
+
     def feed
       @posts = Herald::Post.recently_published.limit(20)
       respond_to do |format|
