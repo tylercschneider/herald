@@ -1,5 +1,9 @@
 # Herald
 
+[![CI](https://github.com/tylercschneider/herald/actions/workflows/ci.yml/badge.svg)](https://github.com/tylercschneider/herald/actions/workflows/ci.yml)
+[![Gem Version](https://badge.fury.io/rb/herald.svg)](https://rubygems.org/gems/herald)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A mountable Rails engine that provides a complete blog with admin UI, public views, RSS/Atom feeds, and a JSON API.
 
 ## Installation

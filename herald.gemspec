@@ -5,8 +5,8 @@ require_relative "lib/herald/version"
 Gem::Specification.new do |spec|
   spec.name = "herald"
   spec.version = Herald::VERSION
-  spec.authors = ["Herald"]
-  spec.email = ["dev@example.com"]
+  spec.authors = ["Tyler Schneider"]
+  spec.email = ["tylercschneider@gmail.com"]
 
   spec.summary = "A blog engine for Rails applications."
   spec.description = "Herald is a mountable Rails engine that provides a complete blog with admin UI, public blog, API, and RSS feed."
@@ -14,6 +14,8 @@ Gem::Specification.new do |spec|
   spec.license = "MIT"
 
   spec.metadata["source_code_uri"] = "https://github.com/tylercschneider/herald"
+  spec.metadata["changelog_uri"] = "https://github.com/tylercschneider/herald/blob/main/CHANGELOG.md"
+  spec.metadata["bug_tracker_uri"] = "https://github.com/tylercschneider/herald/issues"
 
   spec.required_ruby_version = ">= 3.0.0"
 
