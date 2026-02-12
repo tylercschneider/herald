@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class ApplicationController < ActionController::Base
-  helper KeystoneUiHelper
-
   # Skip CSRF for test auth routes
   skip_forgery_protection if: -> { Rails.env.test? }
 
