@@ -9,5 +9,11 @@ module Herald
         helper Rails.application.routes.url_helpers
       end
     end
+
+    initializer "herald.keystone_ui" do
+      ActiveSupport.on_load(:action_view) do
+        include KeystoneUiHelper
+      end
+    end
   end
 end
