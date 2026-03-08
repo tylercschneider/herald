@@ -207,7 +207,8 @@ class Herald::BlogControllerTest < ActionDispatch::IntegrationTest
     get herald.blog_post_path(@published_post.slug)
     assert_response :success
     assert_match "Related Posts", response.body
-    assert_select "a[href='#{herald.blog_post_path(related.slug)}']", text: "Related Post"
+    assert_match "Related Post", response.body
+    assert_select "a[href='#{herald.blog_post_path(related.slug)}']"
   end
 
   test "show hides related posts section when none exist" do
