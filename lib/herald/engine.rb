@@ -10,9 +10,12 @@ module Herald
       end
     end
 
-    initializer "herald.keystone_ui" do
+    initializer "herald.keystone_ui", after: "keystone_ui.tailwind_source" do
+      helper_path = KeystoneUi::Engine.root.join("app/helpers/keystone_ui_helper.rb")
+      require helper_path.to_s
+
       ActiveSupport.on_load(:action_view) do
-        include KeystoneUiHelper
+        include ::KeystoneUiHelper
       end
     end
   end
