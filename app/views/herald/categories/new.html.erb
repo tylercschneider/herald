@@ -1,4 +1,4 @@
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-  <h1 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">New Category</h1>
+<%= ui_page(max_width: :xl) do %>
+  <%= ui_form_page(title: "New Category", back_url: herald.categories_path) %>
   <%= render "form", category: @category %>
-</div>
+<% end %>

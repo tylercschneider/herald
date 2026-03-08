@@ -1,17 +1,16 @@
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white"><%= @post.title %></h1>
-    <div class="flex items-center gap-3">
-      <%= link_to "Preview", herald.preview_post_path(@post), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
-      <% if @post.published? %>
-        <%= link_to "View on blog", herald.blog_post_path(@post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
-      <% end %>
-      <%= link_to "Edit", herald.edit_post_path(@post), class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
-      <%= button_to "Delete", herald.post_path(@post), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete this post?" } %>
-    </div>
-  </div>
+<%= ui_page(max_width: :xl) do %>
+  <%= ui_page_header(title: @post.title) do |header|
+    header.action do
+      safe_join([
+        link_to("Preview", herald.preview_post_path(@post), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank"),
+        (link_to("View on blog", herald.blog_post_path(@post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank") if @post.published?),
+        ui_button(label: "Edit", href: herald.edit_post_path(@post)),
+        button_to("Delete", herald.post_path(@post), method: :delete, class: "text-sm text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300", data: { turbo_confirm: "Delete this post?" })
+      ].compact, " ")
+    end
+  end %>
 
-  <div class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:bg-zinc-900 dark:border-zinc-700">
+  <%= ui_panel(padding: :lg, radius: :xl) do %>
     <div class="flex items-center gap-2 mb-4 text-sm text-gray-500 dark:text-gray-400">
       <% if @post.published? %>
         <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-green-600/20 ring-inset dark:bg-green-500/10 dark:text-green-400 dark:ring-green-500/20">Published</span>
@@ -58,22 +57,23 @@
         <% end %>
       </div>
     <% end %>
-  </div>
+  <% end %>
 
   <% if @post.revisions.any? %>
-    <div class="mt-6 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:bg-zinc-900 dark:border-zinc-700">
-      <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Revision History</h2>
-      <div class="space-y-3">
-        <% @post.revisions.each do |revision| %>
-          <div class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-zinc-800 last:border-0">
-            <div>
-              <span class="text-sm font-medium text-gray-900 dark:text-white"><%= revision.title %></span>
-              <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">by <%= revision.user.name %></span>
+    <%= ui_section(title: "Revision History", spacing: :md) do %>
+      <%= ui_panel(padding: :lg, radius: :xl) do %>
+        <div class="space-y-3">
+          <% @post.revisions.each do |revision| %>
+            <div class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-zinc-800 last:border-0">
+              <div>
+                <span class="text-sm font-medium text-gray-900 dark:text-white"><%= revision.title %></span>
+                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">by <%= revision.user.name %></span>
+              </div>
+              <span class="text-xs text-gray-500 dark:text-gray-400"><%= revision.created_at.strftime("%b %-d, %Y %l:%M %p") %></span>
             </div>
-            <span class="text-xs text-gray-500 dark:text-gray-400"><%= revision.created_at.strftime("%b %-d, %Y %l:%M %p") %></span>
-          </div>
-        <% end %>
-      </div>
-    </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
   <% end %>
-</div>
+<% end %>

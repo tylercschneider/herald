@@ -1,13 +1,9 @@
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-  <div>
-    <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">Blog Categories</h1>
-        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Organize your blog posts</p>
-      </div>
-      <%= link_to "New Category", herald.new_category_path, class: "rounded-md bg-indigo-600 px-4 py-3 text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 min-h-[44px] inline-flex items-center" %>
-    </div>
-  </div>
+<%= ui_page(max_width: :xl) do %>
+  <%= ui_page_header(title: "Blog Categories", subtitle: "Organize your blog posts") do |header|
+    header.action do
+      ui_button(label: "New Category", href: herald.new_category_path)
+    end
+  end %>
 
   <div class="mt-8">
     <% if @categories.any? %>
@@ -33,4 +29,4 @@
       </div>
     <% end %>
   </div>
-</div>
+<% end %>
