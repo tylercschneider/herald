@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "pagy"
+require "keystone_ui"
 require "herald/version"
 require "herald/engine"
 
