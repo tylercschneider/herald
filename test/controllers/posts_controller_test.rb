@@ -125,6 +125,15 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Rails", response.body
   end
 
+  test "show tag badges use accent colors not hardcoded blue" do
+    @post.tag_list = "Ruby"
+    @post.save!
+
+    get herald.post_path(@post)
+    assert_response :success
+    assert_no_match "bg-blue-50", response.body
+  end
+
   test "create with pinned creates pinned post" do
     post herald.posts_path, params: {
       herald_post: {title: "Pinned Post", pinned: true}
