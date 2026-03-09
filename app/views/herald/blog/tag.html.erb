@@ -1,6 +1,6 @@
 <%= ui_page(max_width: :md, top_offset: :lg) do %>
   <div class="text-center mb-12">
-    <p class="text-sm font-medium text-blue-600 dark:text-blue-400 mb-2">Tag</p>
+    <p class="text-sm font-medium <%= herald_accent(:text) %> <%= herald_accent(:dark_text) %> mb-2">Tag</p>
     <h1 class="text-4xl font-bold mb-4"><%= @tag.name %></h1>
   </div>
 
@@ -10,15 +10,15 @@
         <article>
           <%= ui_panel(padding: :lg, radius: :xl) do %>
             <%= link_to herald.blog_post_path(post.slug), class: "block group" do %>
-              <h2 class="text-2xl font-semibold mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"><%= post.title %></h2>
+              <h2 class="text-2xl font-semibold mb-2 <%= herald_title_hover_classes %>"><%= post.title %></h2>
             <% end %>
-            <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+            <div class="flex items-center gap-3 text-sm <%= herald_surface(:body) %> mb-3">
               <span><%= post.user.name %></span>
               <span>&middot;</span>
               <time datetime="<%= post.published_at.iso8601 %>"><%= post.published_at.strftime("%B %-d, %Y") %></time>
             </div>
             <% if post.excerpt.present? %>
-              <p class="text-gray-600 dark:text-gray-400"><%= post.excerpt %></p>
+              <p class="<%= herald_surface(:muted) %>"><%= post.excerpt %></p>
             <% end %>
           <% end %>
         </article>
@@ -27,10 +27,10 @@
 
     <%== @pagy.series_nav %>
   <% else %>
-    <p class="text-center text-gray-500 dark:text-gray-400">No posts with this tag yet.</p>
+    <p class="text-center <%= herald_surface(:body) %>">No posts with this tag yet.</p>
   <% end %>
 
-  <div class="mt-12 pt-8 border-t border-gray-200 dark:border-zinc-700">
-    <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+  <div class="mt-12 pt-8 border-t <%= herald_surface(:card_border) %>">
+    <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: herald_accent_link_classes %>
   </div>
 <% end %>

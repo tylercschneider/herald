@@ -30,7 +30,7 @@
   <article>
     <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4"><%= @post.title %></h1>
-      <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
+      <div class="flex items-center gap-3 text-sm <%= herald_surface(:body) %>">
         <span><%= @post.user.name %></span>
         <% if @post.published_at.present? %>
           <span>&middot;</span>
@@ -39,13 +39,13 @@
         <% if @post.categories.any? %>
           <span>&middot;</span>
           <% @post.categories.each do |category| %>
-            <%= link_to category.name, herald.blog_category_path(category.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+            <%= link_to category.name, herald.blog_category_path(category.slug), class: herald_accent_link_classes %>
           <% end %>
         <% end %>
         <% if @post.tags.any? %>
           <span>&middot;</span>
           <% @post.tags.each do |tag| %>
-            <%= link_to tag.name, herald.blog_tag_path(tag.slug), class: "text-blue-600 hover:underline dark:text-blue-400" %>
+            <%= link_to tag.name, herald.blog_tag_path(tag.slug), class: herald_accent_link_classes %>
           <% end %>
         <% end %>
       </div>
@@ -73,7 +73,7 @@
     <% end %>
   <% end %>
 
-  <div class="mt-12 pt-8 border-t border-gray-200 dark:border-zinc-700">
-    <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+  <div class="mt-12 pt-8 border-t <%= herald_surface(:card_border) %>">
+    <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: herald_accent_link_classes %>
   </div>
 <% end %>
