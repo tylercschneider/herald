@@ -33,6 +33,15 @@ class Herald::ThemeHelperTest < ActionView::TestCase
     end
   end
 
+  test "herald_accent_badge_classes includes accent badge colors" do
+    KeystoneUi.configure { |c| c.accent = :emerald }
+    classes = herald_accent_badge_classes
+
+    assert_includes classes, "bg-emerald-100"
+    assert_includes classes, "text-emerald-700"
+    assert_not_includes classes, "bg-blue-100"
+  end
+
   test "colors change when host app configures a custom accent" do
     KeystoneUi.configure do |c|
       c.accent = {

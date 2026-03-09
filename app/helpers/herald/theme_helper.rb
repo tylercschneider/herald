@@ -14,6 +14,10 @@ module Herald
       "#{herald_accent(:text)} #{herald_accent(:dark_text)} hover:underline"
     end
 
+    def herald_accent_badge_classes
+      "#{herald_accent(:badge_bg)} #{herald_accent(:badge_text)} #{herald_accent(:badge_dark_bg)} #{herald_accent(:badge_dark_text)}"
+    end
+
     def herald_title_hover_classes
       # Converts accent text classes to group-hover variants
       # e.g. "text-blue-600" → "group-hover:text-blue-600"
