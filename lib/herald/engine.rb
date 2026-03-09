@@ -14,6 +14,9 @@ module Herald
       helper_path = KeystoneUi::Engine.root.join("app/helpers/keystone_ui_helper.rb")
       require helper_path.to_s
 
+      theme_helper_path = root.join("app/helpers/herald/theme_helper.rb")
+      require theme_helper_path.to_s
+
       ActiveSupport.on_load(:action_view) do
         include ::KeystoneUiHelper
         include Herald::ThemeHelper
