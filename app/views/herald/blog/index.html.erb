@@ -1,7 +1,7 @@
 <%= ui_page(max_width: :md, top_offset: :lg) do %>
   <div class="text-center mb-12">
     <h1 class="text-4xl font-bold mb-4">Blog</h1>
-    <p class="text-gray-700 dark:text-gray-200 leading-relaxed text-xl">Latest articles and insights</p>
+    <p class="<%= herald_surface(:body) %> leading-relaxed text-xl">Latest articles and insights</p>
   </div>
 
   <%= form_tag herald.blog_path, method: :get, class: "mb-8 flex gap-2" do %>
@@ -20,27 +20,27 @@
               <% end %>
             <% end %>
             <%= link_to herald.blog_post_path(post.slug), class: "block group" do %>
-              <h2 class="text-2xl font-semibold mb-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400"><%= post.title %></h2>
+              <h2 class="text-2xl font-semibold mb-2 <%= herald_title_hover_classes %>"><%= post.title %></h2>
             <% end %>
-            <div class="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400 mb-3">
+            <div class="flex items-center gap-3 text-sm <%= herald_surface(:body) %> mb-3">
               <span><%= post.user.name %></span>
               <span>&middot;</span>
               <time datetime="<%= post.published_at.iso8601 %>"><%= post.published_at.strftime("%B %-d, %Y") %></time>
               <% if post.categories.any? %>
                 <span>&middot;</span>
                 <% post.categories.each do |category| %>
-                  <%= link_to category.name, herald.blog_category_path(category.slug), class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
+                  <%= link_to category.name, herald.blog_category_path(category.slug), class: herald_accent_link_classes %>
                 <% end %>
               <% end %>
               <% if post.tags.any? %>
                 <span>&middot;</span>
                 <% post.tags.each do |tag| %>
-                  <%= link_to tag.name, herald.blog_tag_path(tag.slug), class: "text-blue-600 hover:underline dark:text-blue-400" %>
+                  <%= link_to tag.name, herald.blog_tag_path(tag.slug), class: herald_accent_link_classes %>
                 <% end %>
               <% end %>
             </div>
             <% if post.excerpt.present? %>
-              <p class="text-gray-600 dark:text-gray-400"><%= post.excerpt %></p>
+              <p class="<%= herald_surface(:muted) %>"><%= post.excerpt %></p>
             <% end %>
           <% end %>
         </article>
@@ -49,6 +49,6 @@
 
     <%== @pagy.series_nav %>
   <% else %>
-    <p class="text-center text-gray-500 dark:text-gray-400">No posts yet. Check back soon!</p>
+    <p class="text-center <%= herald_surface(:body) %>">No posts yet. Check back soon!</p>
   <% end %>
 <% end %>

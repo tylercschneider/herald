@@ -16,6 +16,7 @@ module Herald
 
       ActiveSupport.on_load(:action_view) do
         include ::KeystoneUiHelper
+        include Herald::ThemeHelper
       end
     end
   end
