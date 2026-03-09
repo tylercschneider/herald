@@ -26,6 +26,7 @@
 }.compact.to_json) %>
 </script>
 
+<div class="pt-20">
 <%= ui_page(max_width: :md) do %>
   <article>
     <header class="mb-8">
@@ -77,3 +78,4 @@
     <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: "text-indigo-600 hover:underline dark:text-indigo-400" %>
   </div>
 <% end %>
+</div>
