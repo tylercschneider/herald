@@ -177,6 +177,12 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "pinned", response.body
   end
 
+  test "form checkbox uses accent classes not hardcoded indigo" do
+    get herald.new_post_path
+    assert_response :success
+    assert_no_match(/text-indigo-600/, response.body)
+  end
+
   test "index shows pinned indicator" do
     @post.update!(pinned: true)
     get herald.posts_path
