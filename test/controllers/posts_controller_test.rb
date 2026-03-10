@@ -135,6 +135,15 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/ring-blue/, response.body)
   end
 
+  test "show category badges use accent helper not hardcoded indigo" do
+    category = Herald::Category.create!(name: "Ruby")
+    @post.categories << category
+
+    get herald.post_path(@post)
+    assert_response :success
+    assert_no_match(/bg-indigo-50/, response.body)
+  end
+
   test "index edit link uses accent classes not hardcoded indigo" do
     get herald.posts_path
     assert_response :success
