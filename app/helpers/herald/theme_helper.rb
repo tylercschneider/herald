@@ -18,6 +18,10 @@ module Herald
       "#{herald_accent(:badge_bg)} #{herald_accent(:badge_text)} #{herald_accent(:badge_dark_bg)} #{herald_accent(:badge_dark_text)}"
     end
 
+    def herald_accent_inline_link_classes
+      "text-sm #{herald_accent(:link_text)} #{herald_accent(:link_hover_text)} #{herald_accent(:link_dark_text)} #{herald_accent(:link_dark_hover_text)}"
+    end
+
     def herald_accent_focus_classes
       "#{herald_accent(:focus_border)} #{herald_accent(:focus_ring)} #{herald_accent(:dark_focus_border)} #{herald_accent(:dark_focus_ring)}"
     end
