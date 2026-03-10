@@ -54,6 +54,12 @@ class Herald::CategoriesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to herald.categories_path
   end
 
+  test "index edit link uses accent classes not hardcoded indigo" do
+    get herald.categories_path
+    assert_response :success
+    assert_no_match(/text-indigo-600/, response.body)
+  end
+
   private
 
   def herald
