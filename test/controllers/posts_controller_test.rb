@@ -135,6 +135,12 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_no_match(/ring-blue/, response.body)
   end
 
+  test "index edit link uses accent classes not hardcoded indigo" do
+    get herald.posts_path
+    assert_response :success
+    assert_no_match(/text-indigo-600/, response.body)
+  end
+
   test "create with pinned creates pinned post" do
     post herald.posts_path, params: {
       herald_post: {title: "Pinned Post", pinned: true}

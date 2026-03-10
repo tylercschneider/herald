@@ -6,8 +6,8 @@
   end %>
 
   <%= form_tag herald.posts_path, method: :get, class: "mt-6 flex gap-2" do %>
-    <%= text_field_tag :q, params[:q], placeholder: "Search posts...", autocomplete: "off", class: "flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
-    <%= select_tag :category, options_for_select([["All Categories", ""]] + @categories.map { |c| [c.name, c.id] }, params[:category]), class: "rounded-lg border border-gray-300 px-4 py-2 text-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
+    <%= text_field_tag :q, params[:q], placeholder: "Search posts...", autocomplete: "off", class: "flex-1 rounded-lg border border-gray-300 px-4 py-2 text-sm #{herald_accent_focus_classes} dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
+    <%= select_tag :category, options_for_select([["All Categories", ""]] + @categories.map { |c| [c.name, c.id] }, params[:category]), class: "rounded-lg border border-gray-300 px-4 py-2 text-sm #{herald_accent_focus_classes} dark:bg-zinc-800 dark:border-zinc-600 dark:text-white" %>
     <%= ui_button(label: "Search", size: :sm) %>
   <% end %>
 
@@ -18,7 +18,7 @@
           <li class="py-4">
             <div class="flex items-center justify-between">
               <div>
-                <%= link_to herald.post_path(post), class: "text-gray-900 dark:text-white font-medium hover:text-indigo-600 dark:hover:text-indigo-400" do %>
+                <%= link_to herald.post_path(post), class: "text-gray-900 dark:text-white font-medium #{herald_accent(:hover_text)} #{herald_accent(:dark_hover_text)}" do %>
                   <%= post.title %>
                 <% end %>
                 <div class="flex items-center gap-2 mt-1 text-sm text-gray-500 dark:text-gray-400">
@@ -38,7 +38,7 @@
                 </div>
               </div>
               <div class="flex gap-2">
-                <%= link_to "Edit", herald.edit_post_path(post), class: "text-sm text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300" %>
+                <%= link_to "Edit", herald.edit_post_path(post), class: herald_accent_inline_link_classes %>
                 <% if post.published? %>
                   <%= link_to "View", herald.blog_post_path(post.slug), class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300", target: "_blank" %>
                 <% end %>
