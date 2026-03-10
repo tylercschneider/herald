@@ -42,6 +42,23 @@ class Herald::ThemeHelperTest < ActionView::TestCase
     assert_not_includes classes, "bg-blue-100"
   end
 
+  test "herald_accent_focus_classes includes focus border and ring" do
+    KeystoneUi.configure { |c| c.accent = :emerald }
+    classes = herald_accent_focus_classes
+
+    assert_includes classes, "focus:border-emerald-500"
+    assert_includes classes, "focus:ring-emerald-500"
+  end
+
+  test "herald_accent_inline_link_classes includes link colors without underline" do
+    KeystoneUi.configure { |c| c.accent = :emerald }
+    classes = herald_accent_inline_link_classes
+
+    assert_includes classes, "text-emerald-600"
+    assert_includes classes, "hover:text-emerald-900"
+    assert_not_includes classes, "underline"
+  end
+
   test "colors change when host app configures a custom accent" do
     KeystoneUi.configure do |c|
       c.accent = {

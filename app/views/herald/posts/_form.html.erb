@@ -38,7 +38,7 @@
         <%= image_tag post.featured_image, class: "max-h-48 rounded-lg" %>
       </div>
     <% end %>
-    <%= form.file_field :featured_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:text-gray-400 dark:file:bg-indigo-900/50 dark:file:text-indigo-400" %>
+    <%= form.file_field :featured_image, accept: "image/*", class: "mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 dark:text-gray-400 dark:file:bg-zinc-700 dark:file:text-gray-300" %>
   </div>
 
   <div>
@@ -64,7 +64,7 @@
 
   <div>
     <label class="inline-flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-      <%= form.check_box :pinned, class: "rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 dark:bg-zinc-800 dark:border-zinc-600" %>
+      <%= form.check_box :pinned, class: "rounded border-gray-300 #{herald_accent(:checkbox)} #{herald_accent(:checkbox_focus)} dark:bg-zinc-800 dark:border-zinc-600" %>
       Pin this post (appears first in blog listing)
     </label>
   </div>
@@ -82,6 +82,6 @@
 
   <div class="flex items-center justify-end gap-3">
     <%= link_to "Cancel", herald.posts_path, class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" %>
-    <%= form.submit class: Keystone::Ui::ButtonComponent::BASE_CLASSES + " " + Keystone::Ui::ButtonComponent::VARIANT_CLASSES[:primary] + " " + Keystone::Ui::ButtonComponent::SIZE_CLASSES[:md] + " cursor-pointer" %>
+    <%= form.submit class: Keystone::Ui::ButtonComponent.new(label: "").classes + " cursor-pointer" %>
   </div>
 <% end %>

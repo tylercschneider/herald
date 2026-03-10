@@ -44,7 +44,7 @@
       <div class="mt-6 pt-4 border-t border-gray-200 dark:border-zinc-700">
         <span class="text-sm text-gray-500 dark:text-gray-400">Categories:</span>
         <% @post.categories.each do |category| %>
-          <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-1 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10 ring-inset dark:bg-indigo-400/10 dark:text-indigo-400 dark:ring-indigo-400/30 ml-1"><%= category.name %></span>
+          <span class="inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ml-1 <%= herald_accent_badge_classes %>"><%= category.name %></span>
         <% end %>
       </div>
     <% end %>

@@ -125,13 +125,29 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     assert_match "Rails", response.body
   end
 
-  test "show tag badges use accent colors not hardcoded blue" do
+  test "show tag badges use accent helper not hardcoded classes" do
     @post.tag_list = "Ruby"
     @post.save!
 
     get herald.post_path(@post)
     assert_response :success
-    assert_no_match "bg-blue-50", response.body
+    # Old hardcoded classes used ring-* and bg-blue-50; new helper uses badge keys
+    assert_no_match(/ring-blue/, response.body)
+  end
+
+  test "show category badges use accent helper not hardcoded indigo" do
+    category = Herald::Category.create!(name: "Ruby")
+    @post.categories << category
+
+    get herald.post_path(@post)
+    assert_response :success
+    assert_no_match(/bg-indigo-50/, response.body)
+  end
+
+  test "index edit link uses accent classes not hardcoded indigo" do
+    get herald.posts_path
+    assert_response :success
+    assert_no_match(/text-indigo-600/, response.body)
   end
 
   test "create with pinned creates pinned post" do
@@ -168,6 +184,12 @@ class Herald::PostsControllerTest < ActionDispatch::IntegrationTest
     get herald.new_post_path
     assert_response :success
     assert_match "pinned", response.body
+  end
+
+  test "form checkbox uses accent classes not hardcoded indigo" do
+    get herald.new_post_path
+    assert_response :success
+    assert_no_match(/text-indigo-600/, response.body)
   end
 
   test "index shows pinned indicator" do

@@ -20,6 +20,6 @@
 
   <div class="flex items-center justify-end gap-3">
     <%= link_to "Cancel", herald.categories_path, class: "text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300" %>
-    <%= form.submit class: Keystone::Ui::ButtonComponent::BASE_CLASSES + " " + Keystone::Ui::ButtonComponent::VARIANT_CLASSES[:primary] + " " + Keystone::Ui::ButtonComponent::SIZE_CLASSES[:md] + " cursor-pointer" %>
+    <%= form.submit class: Keystone::Ui::ButtonComponent.new(label: "").classes + " cursor-pointer" %>
   </div>
 <% end %>
