@@ -30,7 +30,7 @@
   <article>
     <header class="mb-8">
       <h1 class="text-4xl font-bold mb-4"><%= @post.title %></h1>
-      <div class="flex items-center gap-3 text-sm <%= herald_surface(:body) %>">
+      <div class="flex items-center gap-3 text-sm text-surface-600 dark:text-surface-400">
         <span><%= @post.user.name %></span>
         <% if @post.published_at.present? %>
           <span>&middot;</span>
@@ -73,7 +73,7 @@
     <% end %>
   <% end %>
 
-  <div class="mt-12 pt-8 border-t <%= herald_surface(:card_border) %>">
+  <div class="mt-12 pt-8 border-t border-surface-200 dark:border-surface-700">
     <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: herald_accent_link_classes %>
   </div>
 <% end %>

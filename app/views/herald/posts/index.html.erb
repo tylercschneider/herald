@@ -18,7 +18,7 @@
           <li class="py-4">
             <div class="flex items-center justify-between">
               <div>
-                <%= link_to herald.post_path(post), class: "text-gray-900 dark:text-white font-medium #{herald_accent(:hover_text)} #{herald_accent(:dark_hover_text)}" do %>
+                <%= link_to herald.post_path(post), class: "text-gray-900 dark:text-white font-medium hover:text-accent-700 dark:hover:text-accent-300" do %>
                   <%= post.title %>
                 <% end %>
                 <div class="flex items-center gap-2 mt-1 text-sm text-gray-500 dark:text-gray-400">
