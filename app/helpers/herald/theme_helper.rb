@@ -2,36 +2,24 @@
 
 module Herald
   module ThemeHelper
-    def herald_accent(key)
-      KeystoneUi::AccentColors[key]
-    end
-
-    def herald_surface(key)
-      KeystoneUi::SurfaceColors[key]
-    end
-
     def herald_accent_link_classes
-      "#{herald_accent(:text)} #{herald_accent(:dark_text)} hover:underline"
+      "text-accent-600 dark:text-accent-400 hover:underline"
     end
 
     def herald_accent_badge_classes
-      "#{herald_accent(:badge_bg)} #{herald_accent(:badge_text)} #{herald_accent(:badge_dark_bg)} #{herald_accent(:badge_dark_text)}"
+      "bg-accent-100 text-accent-700 dark:bg-accent-900/50 dark:text-accent-400"
     end
 
     def herald_accent_inline_link_classes
-      "text-sm #{herald_accent(:link_text)} #{herald_accent(:link_hover_text)} #{herald_accent(:link_dark_text)} #{herald_accent(:link_dark_hover_text)}"
+      "text-sm text-accent-600 hover:text-accent-900 dark:text-accent-400 dark:hover:text-accent-300"
     end
 
     def herald_accent_focus_classes
-      "#{herald_accent(:focus_border)} #{herald_accent(:focus_ring)} #{herald_accent(:dark_focus_border)} #{herald_accent(:dark_focus_ring)}"
+      "focus:border-accent-500 focus:ring-accent-500 dark:focus:border-accent-400 dark:focus:ring-accent-400"
     end
 
     def herald_title_hover_classes
-      # Converts accent text classes to group-hover variants
-      # e.g. "text-blue-600" → "group-hover:text-blue-600"
-      [herald_accent(:text), herald_accent(:dark_text)].map { |c|
-        c.split.map { |token| "group-hover:#{token}" }.join(" ")
-      }.join(" ")
+      "group-hover:text-accent-600 group-hover:dark:text-accent-400"
     end
   end
 end

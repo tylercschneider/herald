@@ -1,9 +1,9 @@
 <%= ui_page(max_width: :md, top_offset: :lg) do %>
   <div class="text-center mb-12">
-    <p class="text-sm font-medium <%= herald_accent(:text) %> <%= herald_accent(:dark_text) %> mb-2">Category</p>
+    <p class="text-sm font-medium text-accent-600 dark:text-accent-400 mb-2">Category</p>
     <h1 class="text-4xl font-bold mb-4"><%= @category.name %></h1>
     <% if @category.description.present? %>
-      <p class="<%= herald_surface(:body) %> leading-relaxed text-xl"><%= @category.description %></p>
+      <p class="text-surface-600 dark:text-surface-400 leading-relaxed text-xl"><%= @category.description %></p>
     <% end %>
   </div>
 
@@ -15,13 +15,13 @@
             <%= link_to herald.blog_post_path(post.slug), class: "block group" do %>
               <h2 class="text-2xl font-semibold mb-2 <%= herald_title_hover_classes %>"><%= post.title %></h2>
             <% end %>
-            <div class="flex items-center gap-3 text-sm <%= herald_surface(:body) %> mb-3">
+            <div class="flex items-center gap-3 text-sm text-surface-600 dark:text-surface-400 mb-3">
               <span><%= post.user.name %></span>
               <span>&middot;</span>
               <time datetime="<%= post.published_at.iso8601 %>"><%= post.published_at.strftime("%B %-d, %Y") %></time>
             </div>
             <% if post.excerpt.present? %>
-              <p class="<%= herald_surface(:muted) %>"><%= post.excerpt %></p>
+              <p class="text-surface-500 dark:text-surface-500"><%= post.excerpt %></p>
             <% end %>
           <% end %>
         </article>
@@ -30,10 +30,10 @@
 
     <%== @pagy.series_nav %>
   <% else %>
-    <p class="text-center <%= herald_surface(:body) %>">No posts in this category yet.</p>
+    <p class="text-center text-surface-600 dark:text-surface-400">No posts in this category yet.</p>
   <% end %>
 
-  <div class="mt-12 pt-8 border-t <%= herald_surface(:card_border) %>">
+  <div class="mt-12 pt-8 border-t border-surface-200 dark:border-surface-700">
     <%= link_to "&larr; Back to Blog".html_safe, herald.blog_path, class: herald_accent_link_classes %>
   </div>
 <% end %>
