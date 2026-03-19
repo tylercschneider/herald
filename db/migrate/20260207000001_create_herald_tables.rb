@@ -1,8 +1,11 @@
-<% author_table = Herald.config.author_class.underscore.pluralize %>
-class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.current_version %>]
+# frozen_string_literal: true
+
+class CreateHeraldTables < ActiveRecord::Migration[8.1]
   def change
+    author_table = Herald.config.author_class.underscore.pluralize
+
     create_table :herald_posts do |t|
-      t.references :<%= Herald.config.author_class.underscore %>, null: false, foreign_key: { to_table: :<%= author_table %> }
+      t.references Herald.config.author_class.underscore.to_sym, null: false, foreign_key: { to_table: author_table.to_sym }
       t.string :title, null: false
       t.string :slug, null: false
       t.text :excerpt
@@ -60,7 +63,7 @@ class CreateHeraldTables < ActiveRecord::Migration[<%= ActiveRecord::Migration.c
 
     create_table :herald_revisions do |t|
       t.references :herald_post, null: false, foreign_key: { on_delete: :cascade }
-      t.references :<%= Herald.config.author_class.underscore %>, null: false, foreign_key: { to_table: :<%= author_table %> }
+      t.references Herald.config.author_class.underscore.to_sym, null: false, foreign_key: { to_table: author_table.to_sym }
       t.string :title, null: false
       t.text :excerpt
       t.text :body_text

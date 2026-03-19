@@ -18,18 +18,6 @@ class Herald::Generators::InstallGeneratorTest < Rails::Generators::TestCase
     )
   end
 
-  test "creates migration file" do
-    run_generator
-    assert_migration "db/migrate/create_herald_tables.rb" do |migration|
-      assert_match(/create_table :herald_posts/, migration)
-      assert_match(/create_table :herald_categories/, migration)
-      assert_match(/create_table :herald_post_categories/, migration)
-      assert_no_match(/account/, migration)
-      assert_match(/add_index :herald_posts, :slug, unique: true/, migration)
-      assert_match(/add_index :herald_categories, :slug, unique: true/, migration)
-    end
-  end
-
   test "creates initializer" do
     run_generator
     assert_file "config/initializers/herald.rb" do |content|

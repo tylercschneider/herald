@@ -18,13 +18,14 @@ Run the install generator:
 
 ```bash
 rails generate herald:install
+rails herald:install:migrations
 rails db:migrate
 ```
 
 This creates:
-- Database migrations for posts, categories, tags, and revisions
 - An initializer at `config/initializers/herald.rb`
 - Engine routes mounted at `/herald`
+- Database migrations for posts, categories, tags, and revisions
 
 ## Configuration
 
