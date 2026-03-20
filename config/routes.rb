@@ -14,7 +14,7 @@ Herald::Engine.routes.draw do
   resources :posts do
     get :preview, on: :member
   end
-  resources :categories, except: [:show]
+  resources :categories, except: [:show], as: :post_categories, path: :post_categories
 
   # API
   namespace :api do
@@ -22,7 +22,7 @@ Herald::Engine.routes.draw do
       get "by_slug/:slug", action: :by_slug, on: :collection, as: :by_slug
       post :bulk, on: :collection
     end
-    resources :categories
+    resources :categories, as: :post_categories, path: :post_categories
     resources :tags
   end
 end
