@@ -24,5 +24,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "rails", ">= 7.0"
   spec.add_dependency "pagy", ">= 6.0"
-  spec.add_dependency "keystone_ui"
+  spec.add_dependency "keystone_ui", ">= 0.4.1"
 end
