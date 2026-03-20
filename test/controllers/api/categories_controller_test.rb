@@ -10,7 +10,7 @@ class Herald::Api::CategoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index returns categories with pagination" do
-    get herald.api_categories_path, as: :json
+    get herald.api_post_categories_path, as: :json
     assert_response :success
     assert_includes response.parsed_body["data"].pluck("name"), "Tech"
     meta = response.parsed_body["meta"]
@@ -20,14 +20,14 @@ class Herald::Api::CategoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show returns category" do
-    get herald.api_category_path(@category), as: :json
+    get herald.api_post_category_path(@category), as: :json
     assert_response :success
     assert_equal "Tech", response.parsed_body["name"]
   end
 
   test "create with valid params" do
     assert_difference("Herald::Category.count") do
-      post herald.api_categories_path, params: {
+      post herald.api_post_categories_path, params: {
         herald_category: {name: "Design", description: "Design articles"}
       }, as: :json
     end
@@ -36,14 +36,14 @@ class Herald::Api::CategoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create with invalid params returns errors" do
-    post herald.api_categories_path, params: {
+    post herald.api_post_categories_path, params: {
       herald_category: {name: ""}
     }, as: :json
     assert_response :unprocessable_entity
   end
 
   test "update category" do
-    patch herald.api_category_path(@category), params: {
+    patch herald.api_post_category_path(@category), params: {
       herald_category: {name: "Technology"}
     }, as: :json
     assert_response :success
@@ -52,7 +52,7 @@ class Herald::Api::CategoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "destroy category" do
     assert_difference("Herald::Category.count", -1) do
-      delete herald.api_category_path(@category), as: :json
+      delete herald.api_post_category_path(@category), as: :json
     end
     assert_response :no_content
   end
